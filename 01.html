@@ -1,0 +1,11 @@
+<h1>input/addEventListener</h1>
+<canvas id="CNVS" width="256px" height="256px"></canvas><hr/>
+red<input id="SLID" type="range"></input><br/>
+<script>
+var cx=CNVS.getContext("webgl");
+function draw(event){
+	cx.clearColor(SLID.value/100,0,0,1);
+	cx.clear(0x4000);
+}
+SLID.addEventListener("input", draw);	draw();
+</script>

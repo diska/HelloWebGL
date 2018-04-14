@@ -1,0 +1,11 @@
+<h1>requestAnimationFrame</h1>
+<canvas id="CNVS" width="256px" height="256px"></canvas><hr/>
+<script>
+var cx=CNVS.getContext("webgl");
+function draw(now){
+	var theta=now/1000;
+	cx.clearColor(Math.sin(theta),0,0,1);
+	cx.clear(0x4000);
+	requestAnimationFrame(draw);
+}	requestAnimationFrame(draw);
+</script>

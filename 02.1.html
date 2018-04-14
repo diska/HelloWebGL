@@ -1,0 +1,35 @@
+<h1>Hello</h1>
+<canvas id="CNVS" width="256px" height="256px"></canvas><hr/>
+<script>
+var cx=CNVS.getContext("webgl");
+cx.enable(cx.SCISSOR_TEST);
+function draw(){
+	const b=0,s=16,t=256;
+	cx.clearColor(red=0, green=0, blue=0, alpha=1);
+	drawRect(b+  0,b+  0,t,t);
+	cx.clearColor(red=0, green=0.5, blue=0, alpha=1);
+	drawRect(b+  0,b+  0,s,t);
+	drawRect(b+ 16,b+112,s,s*2);
+	drawRect(b+ 32,b+  0,s,t);
+
+	drawRect(b+ 64,b+  0,s,t);
+	drawRect(b+ 80,b+224,s,s*2);
+	drawRect(b+ 80,b+112,s,s*2);
+	drawRect(b+ 80,b+  0,s,s*2);
+
+	drawRect(b+112,b+  0,s,t);
+	drawRect(b+128,b+  0,s,s*2);
+
+	drawRect(b+160,b+  0,s,t);
+	drawRect(b+176,b+  0,s,s*2);
+
+	drawRect(b+208,b+  0,s,t);
+	drawRect(b+224,b+  0,s,s*2);
+	drawRect(b+224,b+224,s,s*2);
+	drawRect(b+240,b+  0,s,t);
+}
+function drawRect(x,y, w,h){
+	cx.scissor(x, y, w, h);	cx.clear(0x4000);
+}
+draw();
+</script>

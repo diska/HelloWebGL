@@ -1,0 +1,35 @@
+<h1>GLSL/WebGLProgram/WebGLShader</h1>
+<canvas id="CNVS" width="256px" height="256px"></canvas><hr/>
+<textarea id="AREA" cols="40" rows="10"></textarea>
+<style>textarea{background-color: bisque;}</style>
+<script>
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
+const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
+var cx0=CNVS.getContext("webgl");
+var vs0=cx0.createShader(cx0.VERTEX_SHADER);	setSh(cx0, vs0, vsrc);
+var fs0=cx0.createShader(cx0.FRAGMENT_SHADER);	setSh(cx0, fs0, fsrc);
+var pg0=cx0.createProgram();	setPg(cx0, pg0, vs0, fs0);
+AREA.value=getLogInfo(cx0, vs0, fs0, pg0);
+//
+cx0.useProgram(pg0);
+cx0.clearColor(0,0.3,0,1);
+cx0.clear(0x4000);
+cx0.drawArrays(0, 0,1);
+//
+function setSh(cx, sh, src){
+	cx.shaderSource(sh, src);
+	cx.compileShader(sh);
+}
+function setPg(cx, pg, vs, fs){
+	cx.attachShader(pg, vs);
+	cx.attachShader(pg, fs);
+	cx.linkProgram(pg);
+}
+function getLogInfo(cx, vs, fs, pg){
+	var str="";
+	str+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}\n`;
+	str+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}\n`;
+	str+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}\n`;
+	return str;
+}
+</script>
