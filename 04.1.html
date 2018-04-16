@@ -1,5 +1,6 @@
-<h1>draw"Array"s/Array Buffer/Vertex Attribute</h1>
+<h1>bufferSubData</h1>
 <canvas id="CNVS" width="256px" height="256px"></canvas><hr/>
+t<input id="SLID" type="range" value="25"></input></br>
 mode<input id="MODE" type="range" max="6" value="4"></input>
 <input id="TEXT" ></input></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
@@ -20,12 +21,16 @@ var dt0=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);
 fillBf(cx0, bf0, dt0);
 //
 cx0.useProgram(pg0);
+var dt1=new Float32Array([0,1]);
 const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
 function draw(){
 	TEXT.value=mode[MODE.value];
+	var t=SLID.value/100;	dt1[0]=Math.cos(t*6.3), dt1[1]=Math.sin(t*6.3);
+	fillBf(cx0, bf0, dt1, offset=2*Float32Array.BYTES_PER_ELEMENT);
 	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
-	cx0.drawArrays(cx0.POINTS+MODE.value, 0,dt0.length/2);
+	cx0.drawArrays(0+MODE.value, 0,dt0.length/2);
 };	draw();
+SLID.addEventListener("input", draw);
 MODE.addEventListener("input", draw);
 //
 function setupSh(cx, sh, src){
@@ -53,7 +58,7 @@ function setupBf(cx, attr, buf, size=3, type=cx0.FLOAT, normalized=false, stride
 	cx.bindBuffer(cx.ARRAY_BUFFER, buf);
 	cx.enableVertexAttribArray(attr);
 	cx.vertexAttribPointer(attr, size, type, normalized, stride, offset);
-	cx.bufferData(cx.ARRAY_BUFFER, 256, cx.STATIC_DRAW);
+	cx.bufferData(cx.ARRAY_BUFFER, 256, cx.DYNAMIC_DRAW);
 	cx.bindBuffer(cx.ARRAY_BUFFER, null);
 }
 </script>
