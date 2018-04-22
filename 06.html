@@ -1,0 +1,95 @@
+<h1>Framebuffer/txtImage2D</h1>
+<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+pg0:<input id="SLD0" type="range"></input></br>
+pg1:<input id="SLD1" type="range"></input></br>
+<textarea id="AREA" cols="80" rows="20"></textarea>
+<style>textarea{background-color: bisque;}</style>
+<script>
+const COMPL=0x8cd5, INATT=0x8cd6, INMIS=0x8cd7, INDIM=0x8cd9, UNSUP=0x8cdd;
+const FRAME=0x8d40, RENDE=0x8d41, COLOR=0x8ce0, DEPTH=0x8d00, STENC=0x8d20;
+const TEX2D=0x0de1, TDIC0=0x8515;
+const ATYPE=0x8cd0, ANAME=0x8cd1, ATLVL=0x8cd2, ATFAC=0x8cd3;
+const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
+const fsrc0=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
+const vsrc1=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
+const fsrc1=`precision mediump float;uniform sampler2D tx0;
+void main(){gl_FragColor=texture2D(tx0,gl_PointCoord);}`;
+AREA.value="";
+var cx0=CNVS.getContext("webgl");
+var pg0=getPg(cx0, vsrc0, fsrc0);chkPg(cx0, pg0);
+var pg1=getPg(cx0, vsrc1, fsrc1);chkPg(cx0, pg1);
+//
+const stat={};
+stat[COMPL]="FRAMEBUFFER_COMPLETE";
+stat[INATT]="FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+stat[INMIS]="FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+stat[INDIM]="FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
+stat[UNSUP]="FRAMEBUFFER_UNSUPPORTED";
+var str="\n";
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+//
+var tx0=cx0.createTexture();
+bindTx(cx0, tx0);{
+	var fbs=256;
+	fillTx(cx0, data=new Uint8Array(fbs*fbs*4), fbs);
+};bindTx(cx0, null);
+//
+var fb0=cx0.createFramebuffer();
+bindFb(cx0, fb0);{
+	framTx(cx0, tx0, COLOR, 0);
+	str+=`FramebufferStatus(fb0)   =${stat[cx0.checkFramebufferStatus(FRAME)]}\n`;
+};bindFb(cx0, null);
+	str+=`FramebufferStatus(null)  =${stat[cx0.checkFramebufferStatus(FRAME)]}\n`;
+AREA.value+=str;
+//
+var mLoc=cx0.getUniformLocation(pg0, "m");
+var tLoc=cx0.getUniformLocation(pg1, "tx0");
+function draw0(fb=null){
+	var t=SLD0.value/100;	c=Math.cos(t*6);s=Math.sin(t*6);
+	cx0.useProgram(pg0);
+	bindFb(cx0, fb);{
+		cx0.clearColor(0.8,0.8,0,1);	cx0.clear(0x4000);
+		cx0.vertexAttrib4f(0, c/2,s/2,0,1);
+		cx0.drawArrays(0, 0,1);
+	};bindFb(cx0, null);
+}
+function draw1(fb=null){
+	var t=SLD1.value/100;	c=Math.cos(t*6);s=Math.sin(t*6);
+	cx0.useProgram(pg1);
+	bindFb(cx0, fb);{
+		cx0.clearColor(0.0,0.3,0,1);	cx0.clear(0x4000);
+		cx0.vertexAttrib4f(0, -c/2,-s/2,0,1);
+		bindTx(cx0, tx0);{
+			cx0.uniform1i(tLoc, 0);
+			cx0.drawArrays(0, 0,1);
+		};bindTx(cx0, null);
+	};bindFb(cx0, null);
+}
+function draw(){
+	draw0(fb0);
+	bindTx(cx0, tx0);{	cx0.generateMipmap(TEX2D);};bindFb(cx0, null);
+	draw1(null);
+}
+SLD0.addEventListener("input", draw);
+SLD1.addEventListener("input", draw);
+draw();
+//
+function bindFb(cx,fb){cx.bindFramebuffer(FRAME,fb);}
+function bindTx(cx,tx){cx.bindTexture(TEX2D, tx);}
+function framTx(cx, tx, atc, lvl=0){cx.framebufferTexture2D(FRAME,atc,TEX2D, tx, lvl);}
+function fillTx(cx, data, fbs=256){cx0.texImage2D(TEX2D,0,cx0.RGBA, fbs,fbs,0,cx0.RGBA,cx0.UNSIGNED_BYTE,data)};
+function getPg(cx, vsrc, fsrc){
+	const SHADV=0x8b31, SHADF=0x8b30;
+	var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+	var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+	var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+	cx0.linkProgram(pg0);
+	return pg0;
+}
+function chkPg(cx, pg){
+	var vs=cx.getAttachedShaders(pg)[0], fs=cx.getAttachedShaders(pg)[1];
+	AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+	AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
+	AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
+}
+</script>
