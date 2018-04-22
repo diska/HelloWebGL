@@ -1,0 +1,24 @@
+<h1>Color space/readPixels</h1>
+<div><canvas id="CNVS" width="256" height="256"></canvas></div><hr/>
+赤:<input id="SLDR" type="range" value="100"></input><br/>
+緑:<input id="SLDG" type="range" value="0"></input><br/>
+青:<input id="SLDB" type="range" value="0"></input><br/>
+透:<input id="SLDA" type="range" value="100"></input><br/>
+色:<input id="OUT0"></input><br/>
+色:<input id="OUT1"></input>
+<style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
+<script>
+var cx=CNVS.getContext("webgl");
+var pixels=new Uint8Array(4);
+function draw(event){
+	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100, alpha=SLDA.value/100;
+	cx.clearColor(red,green,blue,alpha);	cx.clear(0x4000);
+	OUT0.value=`(${red},${green},${blue},${alpha})`;
+	cx.readPixels(0,0,1,1,cx.RGBA, cx.UNSIGNED_BYTE, pixels);
+	OUT1.value=`(${pixels[0]},${pixels[1]},${pixels[2]},${pixels[3]})`;
+}	draw();
+SLDR.addEventListener("input", draw);
+SLDG.addEventListener("input", draw);
+SLDB.addEventListener("input", draw);
+SLDA.addEventListener("input", draw);
+</script>

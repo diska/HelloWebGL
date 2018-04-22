@@ -1,6 +1,9 @@
-<h1>attribute variables/vertex attribute</h1>
+<h1>Clipping space/attribute variables/vertex attribute</h1>
 <canvas id="CNVS" width="256" height="256"></canvas><hr/>
-<input id="SLID" type="range"></input></br>
+<input id="SLDX" type="range" min="-100" max="100" value="0"></input><input id="TXTX"></br>
+<input id="SLDY" type="range" min="-100" max="100" value="0"></input><input id="TXTY"></br>
+<input id="SLDZ" type="range" min="-100" max="100" value="0"></input><input id="TXTZ"></br>
+<input id="SLDW" type="range" min="-100" max="100" value="100"></input><input id="TXTW"></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
@@ -8,34 +11,29 @@ const vsrc=`attribute vec4 p;
 void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
 var cx0=CNVS.getContext("webgl");
-var vs0=cx0.createShader(cx0.VERTEX_SHADER);	setSh(cx0, vs0, vsrc);
-var fs0=cx0.createShader(cx0.FRAGMENT_SHADER);	setSh(cx0, fs0, fsrc);
-var pg0=cx0.createProgram();	setPg(cx0, pg0, vs0, fs0);
-AREA.value=getLogInfo(cx0, vs0, fs0, pg0);
+const SHADV=0x8b31, SHADF=0x8b30;
+var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+cx0.linkProgram(pg0);
+AREA.value="";
+AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}\n`;
+AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}\n`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}\n`;
 //
+var pg0p=cx0.getAttribLocation(pg0, "p");
 cx0.useProgram(pg0);
 function draw(){
-	var x=SLID.value/100;
-	cx0.vertexAttrib4f(0, x=x, y=0, z=0, w=1);
+	var x=SLDX.value/100, y=SLDY.value/100, z=SLDZ.value/100, w=SLDW.value/100;
+	TXTX.value="x="+x, TXTY.value="y="+y, TXTZ.value="z="+z, TXTW.value="w="+w;
+	cx0.vertexAttrib4f(pg0p, x=x, y=y, z=z, w=w);
 	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
 	cx0.drawArrays(0, 0,1);
-}
-SLID.addEventListener("input", draw);	draw();
-//
-function setSh(cx, sh, src){
-	cx.shaderSource(sh, src);
-	cx.compileShader(sh);
-}
-function setPg(cx, pg, vs, fs){
-	cx.attachShader(pg, vs);
-	cx.attachShader(pg, fs);
-	cx.linkProgram(pg);
-}
-function getLogInfo(cx, vs, fs, pg){
-	var str="";
-	str+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}\n`;
-	str+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}\n`;
-	str+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}\n`;
-	return str;
-}
+}	draw();
+SLDX.addEventListener("input", draw);
+SLDY.addEventListener("input", draw);
+SLDZ.addEventListener("input", draw);
+SLDW.addEventListener("input", draw);
+CNVS.addEventListener("click", resetValues);
+function resetValues(){SLDX.value=0, SLDY.value=0, SLDZ.value=0, SLDW.value=100;draw();}
 </script>

@@ -4,7 +4,8 @@ red<input id="SLID" type="range"></input><br/>
 <script>
 var cx=CNVS.getContext("webgl");
 function draw(event){
-	cx.clearColor(SLID.value/100,0,0,1);
+	var red=SLID.value/100
+	cx.clearColor(red,0,0,1);
 	cx.clear(0x4000);
 }
 SLID.addEventListener("input", draw);	draw();

@@ -1,23 +1,36 @@
-<h1>draw"Array"s/Array Buffer/Vertex Attribute</h1>
+<h1>draw"Array"s/Array Buffer</h1>
 <canvas id="CNVS" width="256" height="256"></canvas><hr/>
 mode<input id="MODE" type="range" max="6" value="4"></input>
 <input id="TEXT" ></input></br>
-<textarea id="AREA" cols="40" rows="10"></textarea>
+<textarea id="AREA" cols="80" rows="20"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
 var cx0=CNVS.getContext("webgl");
+var cx0=CNVS.getContext("webgl");
+const SHADV=0x8b31, SHADF=0x8b30;
+var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+cx0.linkProgram(pg0);
+AREA.value="";
+AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}\n`;
+AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}\n`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}\n`;
 //
-var vs0=cx0.createShader(cx0.VERTEX_SHADER);	setupSh(cx0, vs0, vsrc);
-var fs0=cx0.createShader(cx0.FRAGMENT_SHADER);	setupSh(cx0, fs0, fsrc);
-var pg0=cx0.createProgram();	setupPg(cx0, pg0, vs0, fs0);
-AREA.value=getLogInfo(cx0, vs0, fs0, pg0);
-//
-var bf0=cx0.createBuffer();		setupBf(cx0, attr=0, bf0, size=2);
-//
+var bf0=cx0.createBuffer();
+bindBf(cx0, bf0);{
+	alocBf(cx0);};
+bindBf(cx0, null);
 var dt0=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);
-fillBf(cx0, bf0, dt0);
+bindBf(cx0, bf0);{
+	fillBf(cx0, dt0);
+};bindBf(cx0, null);
+bindBf(cx0, bf0);{
+	var pg0p=cx0.getAttribLocation(pg0, "p");
+	setupBf(cx0, attr=pg0p, size=2);
+};bindBf(cx0, null);
 //
 cx0.useProgram(pg0);
 const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
@@ -28,32 +41,11 @@ function draw(){
 };	draw();
 MODE.addEventListener("input", draw);
 //
-function setupSh(cx, sh, src){
-	cx.shaderSource(sh, src);
-	cx.compileShader(sh);
-}
-function setupPg(cx, pg, vs, fs){
-	cx.attachShader(pg, vs);
-	cx.attachShader(pg, fs);
-	cx.linkProgram(pg);
-}
-function getLogInfo(cx, vs, fs, pg){
-	var str="";
-	str+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}\n`;
-	str+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}\n`;
-	str+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}\n`;
-	return str;
-}
-function fillBf(cx, buf, data, offset=0){
-	cx.bindBuffer(cx.ARRAY_BUFFER, buf);
-	cx.bufferSubData(cx.ARRAY_BUFFER, offset, data);
-	cx.bindBuffer(cx.ARRAY_BUFFER, null);
-}
-function setupBf(cx, attr, buf, size=3, type=cx0.FLOAT, normalized=false, stride=0, offset=0){
-	cx.bindBuffer(cx.ARRAY_BUFFER, buf);
+function bindBf(cx, buf){cx.bindBuffer(cx.ARRAY_BUFFER, buf);}
+function alocBf(cx, size=256, usage=cx.STATIC_DRAW){cx.bufferData(cx.ARRAY_BUFFER, size, usage);}
+function fillBf(cx, data, offset=0){cx.bufferSubData(cx.ARRAY_BUFFER, offset, data);}
+function setupBf(cx, attr, size=3, type=cx0.FLOAT, normalized=false, stride=0, offset=0){
 	cx.enableVertexAttribArray(attr);
 	cx.vertexAttribPointer(attr, size, type, normalized, stride, offset);
-	cx.bufferData(cx.ARRAY_BUFFER, 256, cx.STATIC_DRAW);
-	cx.bindBuffer(cx.ARRAY_BUFFER, null);
 }
 </script>

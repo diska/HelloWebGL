@@ -1,35 +1,17 @@
-<h1>Hello</h1>
+<h1>scissor</h1>
 <canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<input id="SLID" type="range" max="256"></input>
+<input id="TEXT"></input>
 <script>
 var cx=CNVS.getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
 function draw(){
-	const b=0,s=16,t=256;
-	cx.clearColor(red=0, green=0, blue=0, alpha=1);
-	drawRect(b+  0,b+  0,t,t);
-	cx.clearColor(red=0, green=0.5, blue=0, alpha=1);
-	drawRect(b+  0,b+  0,s,t);
-	drawRect(b+ 16,b+112,s,s*2);
-	drawRect(b+ 32,b+  0,s,t);
-
-	drawRect(b+ 64,b+  0,s,t);
-	drawRect(b+ 80,b+224,s,s*2);
-	drawRect(b+ 80,b+112,s,s*2);
-	drawRect(b+ 80,b+  0,s,s*2);
-
-	drawRect(b+112,b+  0,s,t);
-	drawRect(b+128,b+  0,s,s*2);
-
-	drawRect(b+160,b+  0,s,t);
-	drawRect(b+176,b+  0,s,s*2);
-
-	drawRect(b+208,b+  0,s,t);
-	drawRect(b+224,b+  0,s,s*2);
-	drawRect(b+224,b+224,s,s*2);
-	drawRect(b+240,b+  0,s,t);
+	var a=SLID.value;	TEXT.value="red=x="+a;
+	cx.clearColor(red=0.5, green=0.5, blue=0.5, alpha=1);
+	cx.scissor(64, 64, 128, 128);	cx.clear(0x4000);
+	cx.clearColor(red=a/100, green=0, blue=0, alpha=0.5);
+	cx.scissor(0, 0, a, a);	cx.clear(0x4000);
+	cx.scissor(a, a, 256-a, 256-a);	cx.clear(0x4000);
 }
-function drawRect(x,y, w,h){
-	cx.scissor(x, y, w, h);	cx.clear(0x4000);
-}
-draw();
+SLID.addEventListener("input", draw);	draw();
 </script>

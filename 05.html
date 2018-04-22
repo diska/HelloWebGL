@@ -17,6 +17,25 @@ AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}\n`;
 AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}\n`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}\n`;
 //
+const BBCOL=0x4000, TXT2D=0x0de1, FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
+var tx0=cx0.createTexture();
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+//
+cx0.useProgram(pg0);
+function draw(){
+	var sz=Math.pow(2, SLID.value);	TEXT.value=sz;	// 1,2,4,8,16...
+	var data=getImageData(sz);
+	bindTx(cx0,tx0);{
+		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, data);
+		cx0.generateMipmap(TXT2D);
+	};bindTx(cx0,null);
+	bindTx(cx0,tx0);{
+		seleTx(cx0, cx0.getUniformLocation(pg0, "tex0"),unit=0);
+		cx0.clearColor(0,0.3,0,1);cx0.clear(BBCOL);
+		cx0.drawArrays(0, 0,1);
+	};bindTx(cx0,null);
+};	SLID.addEventListener("input", draw);	draw();
+//
 function getImageData(sz=256){
 	var data=new Uint8Array(sz*sz);	data.fill(0x3f,0,sz*sz);
 	for(var i=0;i<sz;i++){	plot(i,Math.sin(i*2*Math.PI/sz)*sz/2+sz/2);}
@@ -24,26 +43,6 @@ function getImageData(sz=256){
 	function plot(x,y){	data[Math.floor(y)*sz+x]=0xff;}
 }
 //
-const BBCOL=0x4000, TXT2D=0x0de1, FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
-function binTx(cx,tx){cx.bindTexture(TXT2D,tx);}
-function selTx(cx, unif, unit=0){cx.activeTexture(TXT00+unit);cx.uniform1i(unif, unit)}
-var tx0=cx0.createTexture();
-cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
-function setTexture(sz=64){
-	binTx(cx0,tx0);{
-		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, getImageData(sz));
-		cx0.generateMipmap(TXT2D);
-	};binTx(cx0,null);
-}
-//
-cx0.useProgram(pg0);
-function draw(){
-	var sz=Math.pow(2, SLID.value);	TEXT.value=sz;	// 1,2,4,8,16...
-	cx0.clearColor(0,0.3,0,1);cx0.clear(BBCOL);
-	setTexture(sz);
-	selTx(cx0, cx0.getUniformLocation(pg0, "tex0"),unit=0);
-	binTx(cx0,tx0);{
-		cx0.drawArrays(0, 0,1);
-	};binTx(cx0,null);
-};	SLID.addEventListener("input", draw);	draw();
+function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
+function seleTx(cx, unif, unit=0){cx.activeTexture(TXT00+unit);cx.uniform1i(unif, unit)}
 </script>
