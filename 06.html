@@ -42,10 +42,9 @@ bindFb(cx0, fb0);{
 	str+=`FramebufferStatus(null)  =${stat[cx0.checkFramebufferStatus(FRAME)]}\n`;
 AREA.value+=str;
 //
-var mLoc=cx0.getUniformLocation(pg0, "m");
-var tLoc=cx0.getUniformLocation(pg1, "tx0");
-function draw0(fb=null){
-	var t=SLD0.value/100;	c=Math.cos(t*6);s=Math.sin(t*6);
+var pg1tx0=cx0.getUniformLocation(pg1, "tx0");
+function draw0(fb=null, t){
+	var c=Math.cos(t*6);s=Math.sin(t*6);
 	cx0.useProgram(pg0);
 	bindFb(cx0, fb);{
 		cx0.clearColor(0.8,0.8,0,1);	cx0.clear(0x4000);
@@ -53,22 +52,22 @@ function draw0(fb=null){
 		cx0.drawArrays(0, 0,1);
 	};bindFb(cx0, null);
 }
-function draw1(fb=null){
-	var t=SLD1.value/100;	c=Math.cos(t*6);s=Math.sin(t*6);
+function draw1(fb=null, t){
+	var c=Math.cos(t*6);s=Math.sin(t*6);
 	cx0.useProgram(pg1);
 	bindFb(cx0, fb);{
 		cx0.clearColor(0.0,0.3,0,1);	cx0.clear(0x4000);
 		cx0.vertexAttrib4f(0, -c/2,-s/2,0,1);
 		bindTx(cx0, tx0);{
-			cx0.uniform1i(tLoc, 0);
+			cx0.uniform1i(pg1tx0, 0);
 			cx0.drawArrays(0, 0,1);
 		};bindTx(cx0, null);
 	};bindFb(cx0, null);
 }
 function draw(){
-	draw0(fb0);
+	draw0(fb0, SLD0.value/100);
 	bindTx(cx0, tx0);{	cx0.generateMipmap(TEX2D);};bindFb(cx0, null);
-	draw1(null);
+	draw1(null, SLD1.value/100);
 }
 SLD0.addEventListener("input", draw);
 SLD1.addEventListener("input", draw);
