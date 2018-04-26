@@ -1,0 +1,34 @@
+<h1>devicemotion (for mobile)</h1>
+<div><canvas id="CNVS" width="256" height="256"></canvas></div><hr/>
+赤:<input id="SLDR" type="range" max="360" value="0"></input><br/>
+緑:<input id="SLDG" type="range" max="360" value="0"></input><br/>
+青:<input id="SLDB" type="range" max="360" value="0"></input><br/>
+透:<input id="SLDA" type="range" value="100"></input><br/>
+色:<input id="OUT0"></input><br/>
+色:<input id="OUT1"></input>
+<style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
+<script>
+var cx=CNVS.getContext("webgl");
+var pixels=new Uint8Array(4);
+function draw(event){
+	var red=SLDR.value/360, green=SLDG.value/360, blue=SLDB.value/360, alpha=SLDA.value/100;
+	cx.clearColor(red,green,blue,alpha);	cx.clear(0x4000);
+	OUT0.value=`(${red},${green},${blue},${alpha})`;
+	cx.readPixels(0,0,1,1,cx.RGBA, cx.UNSIGNED_BYTE, pixels);
+	OUT1.value=`(${pixels[0]},${pixels[1]},${pixels[2]},${pixels[3]})`;
+}	draw();
+function updateMotion(ev){
+	// https://w3c.github.io/deviceorientation/spec-source-orientation.html
+	// よくわかってないのでcolorへのマッピングが妥当かの判断は保留。
+	SLDR.value=ev.accelerationIncludingGravity.x;
+	SLDG.value=ev.accelerationIncludingGravity.y;
+	SLDB.value=ev.accelerationIncludingGravity.z;
+//	SLDA.value=alpha;
+	draw();
+}
+window.addEventListener("devicemotion", updateMotion);
+SLDR.addEventListener("input", draw);
+SLDG.addEventListener("input", draw);
+SLDB.addEventListener("input", draw);
+SLDA.addEventListener("input", draw);
+</script>

@@ -1,0 +1,31 @@
+<h1>deviceorientation (for mobile)</h1>
+<div><canvas id="CNVS" width="256" height="256"></canvas></div><hr/>
+方位赤:<input id="SLDR" type="range"></input><br/>
+前転緑:<input id="SLDG" type="range"></input><br/>
+横転青:<input id="SLDB" type="range"></input><br/>
+元の数:<input id="OUT0"></input><br/>
+指定色:<input id="OUT1"></input><br/>
+表示色:<input id="OUT2"></input>
+<script>
+var cx=CNVS.getContext("webgl");
+var pixels=new Uint8Array(4);
+function draw(event){
+	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100;
+	cx.clearColor(red,green,blue,1);	cx.clear(0x4000);
+	OUT0.value=`(${SLDR.value},${SLDG.value},${SLDB.value},${1})`;
+	OUT1.value=`(${red},${green},${blue},${1})`;
+	cx.readPixels(0,0,1,1,cx.RGBA, cx.UNSIGNED_BYTE, pixels);
+	OUT2.value=`(${pixels[0]},${pixels[1]},${pixels[2]},${pixels[3]})`;
+}	draw();
+function updateOrientation(ev){
+	// よくわかってないのでとりあえず0to100にしてみる。
+	SLDR.value=ev.alpha*100/360;	// 0to360?
+	SLDG.value=ev.beta*100/360+50;	// -180to180?
+	SLDB.value=ev.gamma*100/180+50;	// -90to90?
+	draw();
+}
+window.addEventListener("deviceorientation", updateOrientation);
+SLDR.addEventListener("input", draw);
+SLDG.addEventListener("input", draw);
+SLDB.addEventListener("input", draw);
+</script>
