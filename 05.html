@@ -1,7 +1,6 @@
 <h1>Texture</h1>
 <hr/><canvas id="CNVS" width="256" height="256"></canvas>
-<textarea id="ADAT" cols="35" rows="18"></textarea>
-<hr/>
+<textarea id="ADAT" cols="35" rows="18"></textarea><hr/>
 <input id="SLID" type="range" value="4" max="4"></input><input id="TEXT"></input><br/>
 <textarea id="ALOG" cols="40" rows="10"></textarea>
 <style>textarea{background-color: bisque;}</style>
@@ -9,7 +8,7 @@
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
 var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
-const SHADV=0x8b31, SHADF=0x8b30;
+const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000,TXT2D=0x0de1;
 var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
@@ -18,37 +17,41 @@ ALOG.value="";
 ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 //
-const BBCOL=0x4000, TXT2D=0x0de1, FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
+const FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
+const MINFT=0x2801,MAGFT=0x2800,NEARE=0x2600,LINEA=0x2601;
 const l="あいうえあいうええういあえういあ\n";
 ADAT.value=l+l+l+l+l+l+l+l+l+l+l+l+l+l+l+l;
 var tx0=cx0.createTexture();
-cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
-var data=new Uint8Array(256);
+var da0=new Uint8Array(256);
+var mode=true;
 cx0.useProgram(pg0);
+seleTx(cx0, cx0.getUniformLocation(pg0, "tex0"),unit=0);
 function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
-	getImageData(data,sz,sz);
+	getImageData(da0,sz,sz);
 	bindTx(cx0,tx0);{
-		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, data);
+		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);
+		if(mode){setfTx(cx0,NEARE)}else{setfTx(cx0,LINEA)};
 		cx0.generateMipmap(TXT2D);
-		seleTx(cx0, cx0.getUniformLocation(pg0, "tex0"),unit=0);
-		cx0.clearColor(0,0.3,0,1);cx0.clear(BBCOL);
+		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
 		cx0.drawArrays(0, 0,1);
 	};bindTx(cx0,null);
 };	draw();
 SLID.addEventListener("input", draw);
-CNVS.addEventListener("click", draw);
+CNVS.addEventListener("click", function(){mode=!mode;draw()});
 //
 function getImageData(data, width=16, height=16){
-	const pat={"あ":0xf0,"い":0xcf,"う":0x9f,"え":0x6f,"お":0x3f,};
+	const pat={"あ":0xff,"い":0xcf,"う":0x9f,"え":0x6f,"お":0x3f,};
 	var str=ADAT.value.split("\n");
-	var h=Math.min([height,str.length]);
 	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
-		if(str[j][i]!=null){data[j*width+i]=pat[str[j][i]];}else{data[j*width+i]=0x00}
+		data[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
 	}}
 }
 //
 function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
-function seleTx(cx, unif, unit=0){cx.activeTexture(TXT00+unit);cx.uniform1i(unif, unit)}
+function seleTx(cx,unif,unit=0){cx.activeTexture(TXT00+unit);cx.uniform1i(unif, unit)}
+function setfTx(cx,mode){cx.texParameteri(TXT2D,MINFT,mode);cx.texParameteri(TXT2D,MAGFT,mode);
+}
 </script>
