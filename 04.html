@@ -1,13 +1,11 @@
 <h1>draw"Array"s/Array Buffer</h1>
 <canvas id="CNVS" width="256" height="256"></canvas><hr/>
-mode<input id="MODE" type="range" max="6" value="4"></input>
-<input id="TEXT" ></input></br>
+mode<input id="MODE" type="range" max="6" value="4"></input><input id="TEXT" ></input></br>
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
-var cx0=CNVS.getContext("webgl");
 var cx0=CNVS.getContext("webgl");
 const SHADV=0x8b31, SHADF=0x8b30;
 var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
@@ -15,9 +13,9 @@ var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
 AREA.value="";
-AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}\n`;
-AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}\n`;
-AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}\n`;
+AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 //
 var bf0=cx0.createBuffer();
 bindBf(cx0, bf0);{

@@ -8,7 +8,7 @@
 <style>textarea{background-color: bisque;}</style>
 <script>
 const vsrc=`attribute vec4 p;uniform vec4 m;
-void main(){gl_PointSize=32.;gl_Position=p;gl_Position.xyz+=m.xyz;}`;
+void main(){gl_PointSize=32.;gl_Position.xyz=p.xyz;gl_Position+=m;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
 var cx0=CNVS.getContext("webgl");
 const SHADV=0x8b31, SHADF=0x8b30;
@@ -17,18 +17,17 @@ var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
 AREA.value="";
-AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}\n`;
-AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}\n`;
-AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}\n`;
+AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 //
 var pg0m=cx0.getUniformLocation(pg0, "m");
 cx0.useProgram(pg0);
 function draw(){
 	var x=SLDX.value/100, y=SLDY.value/100, z=SLDZ.value/100, w=SLDW.value/100;
 	TXTX.value="x="+x, TXTY.value="y="+y, TXTZ.value="z="+z, TXTW.value="w="+w;
-	cx0.uniform4f(pg0m, x, y,z,w);
 	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
-	cx0.drawArrays(0, 0,1);
+	cx0.uniform4f(pg0m, x,y,z,w);	cx0.drawArrays(0, 0,1);
 }	draw();
 SLDX.addEventListener("input", draw);
 SLDY.addEventListener("input", draw);
