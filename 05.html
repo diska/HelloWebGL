@@ -21,10 +21,10 @@ cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 //
 const FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
 const MINFT=0x2801,MAGFT=0x2800,NEARE=0x2600,LINEA=0x2601;
-const l="あいうえあいうええういあえういあ\n";
+const l="赤緑青白赤緑青黒黒青緑赤白青緑赤\n";
 ADAT.value=l+l+l+l+l+l+l+l+l+l+l+l+l+l+l+l;
 var tx0=cx0.createTexture();
-var da0=new Uint8Array(256);
+var da0=new Uint8Array(256*4);
 var mode=true;
 cx0.useProgram(pg0);
 seleTx(cx0, cx0.getUniformLocation(pg0, "tex0"),unit=0);
@@ -32,7 +32,7 @@ function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
 	getImageData(da0,sz,sz);
 	bindTx(cx0,tx0);{
-		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);
+		cx0.texImage2D(TXT2D, 0, FRGBA, sz, sz, 0, FRGBA, TYPUB, da0);
 		if(mode){setfTx(cx0,NEARE)}else{setfTx(cx0,LINEA)};
 		cx0.generateMipmap(TXT2D);
 		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
@@ -43,10 +43,14 @@ SLID.addEventListener("input", draw);
 CNVS.addEventListener("click", function(){mode=!mode;draw()});
 //
 function getImageData(data, width=16, height=16){
-	const pat={"あ":0xff,"い":0xcf,"う":0x9f,"え":0x6f,"お":0x3f,};
+	const pat={"赤":[0xff,0,0,0xff],"緑":[0,0xcf,0,0xff],"青":[0,0,0x9f,0xff],
+		"黒":[0,0,0,0xff],"白":[0xff,0xff,0xff,0xff],"透":[0x00,0x00,0x00,0x00],};
 	var str=ADAT.value.split("\n");
 	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
-		data[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
+		data[(j*width+i)*4+0]=(str[j]&&str[j][i])?pat[str[j][i]][0]:0x00;
+		data[(j*width+i)*4+1]=(str[j]&&str[j][i])?pat[str[j][i]][1]:0x00;
+		data[(j*width+i)*4+2]=(str[j]&&str[j][i])?pat[str[j][i]][2]:0x00;
+		data[(j*width+i)*4+3]=(str[j]&&str[j][i])?pat[str[j][i]][3]:0xff;
 	}}
 }
 //
