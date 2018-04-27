@@ -17,21 +17,21 @@ ALOG.value="";
 ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
+var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
 cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 //
 const FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
 const MINFT=0x2801,MAGFT=0x2800,NEARE=0x2600,LINEA=0x2601;
 const l="赤緑青白赤緑青黒黒青緑赤白青緑赤\n";
 ADAT.value=l+l+l+l+l+l+l+l+l+l+l+l+l+l+l+l;
-var tx0=cx0.createTexture();
 var da0=new Uint8Array(256*4);
+var tx0=cx0.createTexture();
 var mode=true;
 cx0.useProgram(pg0);
-seleTx(cx0, cx0.getUniformLocation(pg0, "tex0"),unit=0);
 function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
-	getImageData(da0,sz,sz);
-	bindTx(cx0,tx0);{
+	fillDa0(ADAT.value, sz,sz);
+	seleTx(cx0, pg0tex0,unit=0);bindTx(cx0,tx0);{
 		cx0.texImage2D(TXT2D, 0, FRGBA, sz, sz, 0, FRGBA, TYPUB, da0);
 		if(mode){setfTx(cx0,NEARE)}else{setfTx(cx0,LINEA)};
 		cx0.generateMipmap(TXT2D);
@@ -42,17 +42,14 @@ function draw(){
 SLID.addEventListener("input", draw);
 CNVS.addEventListener("click", function(){mode=!mode;draw()});
 //
-function getImageData(data, width=16, height=16){
-	const pat={"赤":[0xff,0,0,0xff],"緑":[0,0xcf,0,0xff],"青":[0,0,0x9f,0xff],
-		"黒":[0,0,0,0xff],"白":[0xff,0xff,0xff,0xff],"透":[0x00,0x00,0x00,0x00],
-		"R":[0xff,0,0,0xff],"G":[0,0xcf,0,0xff],"B":[0,0,0x9f,0xff],
-		"b":[0,0,0,0xff],"w":[0xff,0xff,0xff,0xff],"a":[0x00,0x00,0x00,0x00],};
-	var str=ADAT.value.split("\n");
+function fillDa0(data, width=16, height=16){
+	const pat={"赤":[0xff,0x00,0x00,0xff],"緑":[0x00,0xcf,0x00,0xff],"青":[0x00,0x00,0x9f,0xff],
+		"黒":[0x00,0x00,0x00,0xff],"白":[0xff,0xff,0xff,0xff],"透":[0x00,0x00,0x00,0x00],
+		"R":[0xff,0x00,0x00,0xff],"G":[0x00,0xcf,0x00,0xff],"B":[0x00,0x00,0x9f,0xff],
+		"b":[0x00,0x00,0x00,0xff],"w":[0xff,0xff,0xff,0xff],"a":[0x00,0x00,0x00,0x00],};
+	var str=data.split("\n");
 	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
-		data[(j*width+i)*4+0]=(str[j]&&str[j][i])?pat[str[j][i]][0]:0x00;
-		data[(j*width+i)*4+1]=(str[j]&&str[j][i])?pat[str[j][i]][1]:0x00;
-		data[(j*width+i)*4+2]=(str[j]&&str[j][i])?pat[str[j][i]][2]:0x00;
-		data[(j*width+i)*4+3]=(str[j]&&str[j][i])?pat[str[j][i]][3]:0xff;
+		da0.set(array=(str[j]&&str[j][i])?pat[str[j][i]]:[0x00,0x00,0x00,0x00], offset=(j*width+i)*4);
 	}}
 }
 //
