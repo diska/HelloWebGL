@@ -1,14 +1,14 @@
-<h1>Texture</h1>
+<h1>Hello, Texture</h1>
 <hr/><canvas id="CNVS" width="256" height="256"></canvas>
-<textarea id="ADAT" cols="35" rows="18"></textarea><hr/>
-<input id="SLID" type="range" value="4" max="4"></input><input id="TEXT"></input><br/>
+<textarea id="ADAT" cols="50" rows="12"></textarea><hr/>
+<input id="SLID" type="range" value="3" max="8"></input><input id="TEXT"></input><br/>
 <textarea id="ALOG" cols="40" rows="10"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
 var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
-const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000,TXT2D=0x0de1;
+const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
 var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
@@ -20,41 +20,39 @@ ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
 cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 //
-const FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401,TXT00=0x84c0;
-const MINFT=0x2801,MAGFT=0x2800,NEARE=0x2600,LINEA=0x2601;
-const l="赤緑青白赤緑青黒黒青緑赤白青緑赤\n";
-ADAT.value=l+l+l+l+l+l+l+l+l+l+l+l+l+l+l+l;
-var da0=new Uint8Array(256*4);
+const TXT2D=0x0de1,TXT00=0x84c0,FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401;
+const MAGFT=0x2800,MINFT=0x2801,NEARE=0x2600,LINEA=0x2601,NEMNE=0x2700;
+const WRAPS=0x2802,WRAPT=0x2803,REPET=0x2901,CLAMP=0x812F,REPEM=0x8370;
+var l=`
+白黒黒白黒白白白白黒白黒黒黒黒白黒黒黒黒白白白白黒
+白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
+白白白白黒白白白黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
+白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
+白黒黒白黒白白白白黒白白白白黒白白白白黒白白白白黒
+`;ADAT.value=l+l;
+var da0=new Uint8Array(256*256);
 var tx0=cx0.createTexture();
-var mode=true;
 cx0.useProgram(pg0);
 function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
 	fillDa0(ADAT.value, sz,sz);
-	seleTx(cx0, pg0tex0,unit=0);bindTx(cx0,tx0);{
-		cx0.texImage2D(TXT2D, 0, FRGBA, sz, sz, 0, FRGBA, TYPUB, da0);
-		if(mode){setfTx(cx0,NEARE)}else{setfTx(cx0,LINEA)};
+	bindTx(cx0,tx0);{
+		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);
 		cx0.generateMipmap(TXT2D);
 		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
 		cx0.drawArrays(0, 0,1);
 	};bindTx(cx0,null);
 };	draw();
+CNVS.addEventListener("click", draw);
 SLID.addEventListener("input", draw);
-CNVS.addEventListener("click", function(){mode=!mode;draw()});
 //
-function fillDa0(data, width=16, height=16){
-	const pat={"赤":[0xff,0x00,0x00,0xff],"緑":[0x00,0xcf,0x00,0xff],"青":[0x00,0x00,0x9f,0xff],
-		"黒":[0x00,0x00,0x00,0xff],"白":[0xff,0xff,0xff,0xff],"透":[0x00,0x00,0x00,0x00],
-		"R":[0xff,0x00,0x00,0xff],"G":[0x00,0xcf,0x00,0xff],"B":[0x00,0x00,0x9f,0xff],
-		"b":[0x00,0x00,0x00,0xff],"w":[0xff,0xff,0xff,0xff],"a":[0x00,0x00,0x00,0x00],};
+function fillDa0(data, width, height){
+	const pat={"黒":0x00,"白":0xff,"b":0x00,"w":0xff};
 	var str=data.split("\n");
 	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
-		da0.set(array=(str[j]&&str[j][i])?pat[str[j][i]]:[0x00,0x00,0x00,0x00], offset=(j*width+i)*4);
+		da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
 	}}
 }
 //
 function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
-function seleTx(cx,unif,unit=0){cx.activeTexture(TXT00+unit);cx.uniform1i(unif, unit)}
-function setfTx(cx,mode){cx.texParameteri(TXT2D,MINFT,mode);cx.texParameteri(TXT2D,MAGFT,mode);
-}
 </script>
