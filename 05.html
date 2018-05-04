@@ -1,7 +1,7 @@
 <h1>Hello, Texture</h1>
 <hr/><canvas id="CNVS" width="256" height="256"></canvas>
-<textarea id="ADAT" cols="50" rows="12"></textarea><hr/>
-<input id="SLID" type="range" value="3" max="8"></input><input id="TEXT"></input><br/>
+<textarea id="ADAT" cols="52" rows="14"></textarea><hr/>
+<input id="SLID" type="range" value="5" max="8"></input><input id="TEXT"></input><br/>
 <textarea id="ALOG" cols="40" rows="10"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
@@ -23,13 +23,13 @@ cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 const TXT2D=0x0de1,TXT00=0x84c0,FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401;
 const MAGFT=0x2800,MINFT=0x2801,NEARE=0x2600,LINEA=0x2601,NEMNE=0x2700;
 const WRAPS=0x2802,WRAPT=0x2803,REPET=0x2901,CLAMP=0x812F,REPEM=0x8370;
-var l=`
+const HELLO=`
 白黒黒白黒白白白白黒白黒黒黒黒白黒黒黒黒白白白白黒
 白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
 白白白白黒白白白黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
 白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
 白黒黒白黒白白白白黒白白白白黒白白白白黒白白白白黒
-`;ADAT.value=l+l;
+`;ADAT.value=HELLO;
 var da0=new Uint8Array(256*256);
 var tx0=cx0.createTexture();
 cx0.useProgram(pg0);

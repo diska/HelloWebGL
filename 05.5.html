@@ -1,0 +1,47 @@
+<h1>Texture/verbose</h1>
+<hr/><canvas id="CNVS" width="256" height="256"></canvas>
+<img id="SRCI" width="256" height="256"></img>
+<textarea id="AINP" cols="40" rows="5"></textarea><hr/>
+<textarea id="ALOG" cols="80" rows="25"></textarea><hr/>
+<style>textarea{background-color: bisque;}</style>
+<script>
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
+const fsrc=`precision mediump float;uniform sampler2D tex0;
+void main(){gl_FragColor=texture2D(tex0, gl_PointCoord);gl_FragColor.rg=1.-gl_FragColor.rg;}`;
+var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
+const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
+var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+cx0.linkProgram(pg0);
+ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
+ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
+var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
+//
+const TXT2D=0x0de1,TXT00=0x84c0,FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401;
+const MAGFT=0x2800,MINFT=0x2801,NEARE=0x2600,LINEA=0x2601,NEMNE=0x2700;
+const WRAPS=0x2802,WRAPT=0x2803,REPET=0x2901,CLAMP=0x812F,REPEM=0x8370;
+AINP.value="data:image/png;base64,"
++"iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAWklEQVQoz5VSSQ4AIQizDf//"
++"MnMjBiyTcrPWLkRk5nEm2hlAQ5oid/YEUQJ1cUtOkHvi2ZC/GeSDEntGenRYfG5O7OwpF4qt"
++"nHnMoVql2hXcv0RVWjnYHexIHx9ZLRyYHB2sAAAAAElFTkSuQmCC";
+cx0.useProgram(pg0);
+var tx0=cx0.createTexture();
+cx0.activeTexture(TXT00+0);	cx0.bindTexture(TXT2D, tx0);
+function draw(){
+	cx0.uniform1i(pg0tex0, 0);
+	cx0.drawArrays(0,0,1);
+};
+function setTx(){
+	cx0.activeTexture(TXT00+0);{
+		cx0.texImage2D(TXT2D,0,FLUMI,FLUMI,TYPUB,SRCI);
+		cx0.generateMipmap(TXT2D);
+	}
+	draw();
+};	SRCI.addEventListener("load", setTx);
+function update(){
+	SRCI.src=AINP.value;
+};	SRCI.addEventListener("click",update);
+update();
+</script>

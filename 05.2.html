@@ -1,0 +1,73 @@
+<h1>Texture Units</h1>
+<hr/><canvas id="CNVS" width="256" height="256"></canvas>
+<textarea id="ADAT" cols="52" rows="14"></textarea><hr/>
+<input id="SLID" type="range" value="0" max="8"></input><input id="TEXT"></input><br/>
+<textarea id="ALOG" cols="40" rows="12"></textarea>
+<style>textarea{background-color: bisque;}</style>
+<script>
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
+const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
+var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
+const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
+var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+cx0.linkProgram(pg0);
+ALOG.value="";
+ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
+ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
+var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+//
+var AL=new Array(32);AL.fill("\n");
+AL[0]=`黒白白黒黒\n白黒黒白黒\n白白白白黒\n白黒黒白黒\n白黒黒白黒\n\n`
+AL[1]=`白白白白黒\n白黒黒黒黒\n白白白黒黒\n白黒黒黒黒\n白白白白黒\n\n`
+AL[2]=`白黒黒白黒\n白黒黒白黒\n白白白白黒\n白黒黒白黒\n白黒黒白黒\n\n`
+AL[3]=`白黒黒黒黒\n白黒黒黒黒\n白黒黒黒黒\n白黒黒黒黒\n白白白白黒\n\n`
+AL[4]=`黒白白黒黒\n白黒黒白黒\n白黒黒白黒\n白黒黒白黒\n黒白白黒黒\n\n`
+const TXT2D=0x0de1,TXT00=0x84c0,FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401;
+const MAGFT=0x2800,MINFT=0x2801,NEARE=0x2600,LINEA=0x2601,NEMNE=0x2700;
+const WRAPS=0x2802,WRAPT=0x2803,REPET=0x2901,CLAMP=0x812F,REPEM=0x8370;
+ALOG.value+=`MAX_TEXTURE_SIZE=                ${cx0.getParameter(0x0d33)}\n`;
+ALOG.value+=`MAX_CUBE_MAP_TEXTURE_SIZE=       ${cx0.getParameter(0x851c)}\n`;
+ALOG.value+=`MAX_COMBINED_TEXTURE_IMAGE_UNITS=${MCTIU=cx0.getParameter(0x8b4d)}\n`;
+ALOG.value+=`MAX_VERTEX_TEXTURE_IMAGE_UNITS=  ${cx0.getParameter(0x8b4c)}\n`;
+ALOG.value+=`MAX_TEXTURE_IMAGE_UNITS=         ${M_TIU=cx0.getParameter(0x8872)}\n`;
+SLID.max=MCTIU-1;
+var da0=new Uint8Array(4*5);
+var txs=[];	for(unit=0;unit<32;unit++)txs[unit]=cx0.createTexture();
+cx0.useProgram(pg0);
+function draw(){
+	var unit=parseInt(SLID.value);	TEXT.value="TEXTURE"+unit;
+	ADAT.value=AL[unit];
+	fillTxs(AL[unit], 4,5,unit);
+	cx0.uniform1i(pg0tex0, unit);
+	cx0.activeTexture(TXT00+unit);
+	bindTx(cx0,txs[unit]);{
+		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
+		cx0.drawArrays(0, 0,1);
+	};bindTx(cx0,null);
+};	draw();
+function save(){AL[parseInt(SLID.value)]=ADAT.value;draw()};
+CNVS.addEventListener("click", save);
+SLID.addEventListener("input", draw);
+//
+function fillTxs(data, width, height,unit){
+	const pat={"黒":0x00,"白":0xff,"b":0x00,"w":0xff};
+	var str=data.split("\n");
+	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
+		da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
+	}
+	bindTx(cx0,txs[unit]);{
+		setrTx(cx0,CLAMP);setfTx(cx0,NEARE);
+		cx0.texImage2D(TXT2D, 0, FLUMI, width, height, 0, FLUMI, TYPUB, da0);
+	}};bindTx(cx0,null);
+}
+//
+function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
+function setfTx(cx,mode){
+	cx.texParameteri(TXT2D,MINFT,mode);cx.texParameteri(TXT2D,MAGFT,mode);}
+function setrTx(cx,mode){
+	cx.texParameteri(TXT2D,WRAPS,mode);cx.texParameteri(TXT2D,WRAPT,mode);}
+</script>
