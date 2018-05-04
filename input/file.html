@@ -1,6 +1,6 @@
 <h1>HTMLInputElement/type="file"/FileReader/dataUrl:(no WebGL)</h1>
 <img id="SRCI" width="256" height="256"></img><hr/>
-画像ファイル選択：<input id="FILE" type="file"></input><hr/>
+画像ファイル選択：<input id="FILE" type="file"><hr/>
 <script>
 var fr=new FileReader();
 fr.addEventListener("load", function log(ev){SRCI.src=ev.target.result;});
