@@ -31,17 +31,17 @@ const HELLO=`
 白黒黒白黒白白白白黒白白白白黒白白白白黒白白白白黒
 `;ADAT.value=HELLO;
 var da0=new Uint8Array(256*256);
-var tx0=cx0.createTexture();
+var tx0=cx0.createTexture();cx0.activeTexture(TXT00+0);cx0.bindTexture(TXT2D,tx0);
 cx0.useProgram(pg0);
 function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
 	fillDa0(ADAT.value, sz,sz);
-	bindTx(cx0,tx0);{
+	cx0.activeTexture(TXT00+0);{
 		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);
 		cx0.generateMipmap(TXT2D);
-		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
-		cx0.drawArrays(0, 0,1);
-	};bindTx(cx0,null);
+	}
+	cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
+	cx0.drawArrays(0, 0,1);
 };	draw();
 CNVS.addEventListener("click", draw);
 SLID.addEventListener("input", draw);
@@ -53,6 +53,4 @@ function fillDa0(data, width, height){
 		da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
 	}}
 }
-//
-function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
 </script>

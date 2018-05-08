@@ -13,8 +13,7 @@ var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
-ALOG.value="";
-ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+ALOG.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
@@ -35,19 +34,24 @@ ALOG.value+=`MAX_COMBINED_TEXTURE_IMAGE_UNITS=${MCTIU=cx0.getParameter(0x8b4d)}\
 ALOG.value+=`MAX_VERTEX_TEXTURE_IMAGE_UNITS=  ${cx0.getParameter(0x8b4c)}\n`;
 ALOG.value+=`MAX_TEXTURE_IMAGE_UNITS=         ${M_TIU=cx0.getParameter(0x8872)}\n`;
 SLID.max=MCTIU-1;
-var da0=new Uint8Array(4*5);
-var txs=[];	for(unit=0;unit<32;unit++)txs[unit]=cx0.createTexture();
 cx0.useProgram(pg0);
+var da0=new Uint8Array(8*8);
+var txs=[];
+for(unit=0;unit<32;unit++){
+	txs[unit]=cx0.createTexture();
+	cx0.activeTexture(TXT00+unit);cx0.bindTexture(TXT2D,txs[unit]);
+	setrTx(cx0,CLAMP);setfTx(cx0,NEARE);
+}
 function draw(){
 	var unit=parseInt(SLID.value);	TEXT.value="TEXTURE"+unit;
 	ADAT.value=AL[unit];
-	fillTxs(AL[unit], 4,5,unit);
+	cx0.activeTexture(TXT00+unit);{
+		fillTxs(AL[unit], 8,8,unit);
+		cx0.texImage2D(TXT2D, 0, FLUMI, 8, 8, 0, FLUMI, TYPUB, da0);
+	}
 	cx0.uniform1i(pg0tex0, unit);
-	cx0.activeTexture(TXT00+unit);
-	bindTx(cx0,txs[unit]);{
-		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
-		cx0.drawArrays(0, 0,1);
-	};bindTx(cx0,null);
+	cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
+	cx0.drawArrays(0, 0,1);
 };	draw();
 function save(){AL[parseInt(SLID.value)]=ADAT.value;draw()};
 CNVS.addEventListener("click", save);
@@ -56,16 +60,12 @@ SLID.addEventListener("input", draw);
 function fillTxs(data, width, height,unit){
 	const pat={"黒":0x00,"白":0xff,"b":0x00,"w":0xff};
 	var str=data.split("\n");
+	console.log(str);
 	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
 		da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
-	}
-	bindTx(cx0,txs[unit]);{
-		setrTx(cx0,CLAMP);setfTx(cx0,NEARE);
-		cx0.texImage2D(TXT2D, 0, FLUMI, width, height, 0, FLUMI, TYPUB, da0);
-	}};bindTx(cx0,null);
+	}}
 }
 //
-function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
 function setfTx(cx,mode){
 	cx.texParameteri(TXT2D,MINFT,mode);cx.texParameteri(TXT2D,MAGFT,mode);}
 function setrTx(cx,mode){

@@ -13,8 +13,7 @@ var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
-ALOG.value="";
-ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+ALOG.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
@@ -27,21 +26,23 @@ const l="赤緑青白赤緑青黒黒青緑赤白青緑赤\n";
 ADAT.value=l+l+l+l+l+l+l+l+l+l+l+l+l+l+l+l;
 var da0=new Uint8Array(256*4);
 var tx0=cx0.createTexture();
-var mode=true;
+cx0.activeTexture(TXT00+0);cx0.bindTexture(TXT2D,tx0);	setrTx(cx0,CLAMP);
+var txMode=true;
 cx0.useProgram(pg0);
+cx0.uniform1i(pg0tex0, 0)
 function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
 	fillDa0(ADAT.value, sz,sz);
-	seleTx(cx0, pg0tex0,unit=0);bindTx(cx0,tx0);{
-		if(mode){setfTx(cx0,NEARE)}else{setfTx(cx0,LINEA)};	setrTx(cx0,CLAMP);
+	cx0.activeTexture(TXT00+0);{
+		if(txMode){setfTx(cx0,NEARE)}else{setfTx(cx0,LINEA)};
 		cx0.texImage2D(TXT2D, 0, FRGBA, sz, sz, 0, FRGBA, TYPUB, da0);
 		cx0.generateMipmap(TXT2D);
-		cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
-		cx0.drawArrays(0, 0,1);
-	};bindTx(cx0,null);
+	}
+	cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
+	cx0.drawArrays(0, 0,1);
 };	draw();
 SLID.addEventListener("input", draw);
-CNVS.addEventListener("click", function(){mode=!mode;draw()});
+CNVS.addEventListener("click", function(){txMode=!txMode;draw()});
 //
 function fillDa0(data, width=16, height=16){
 	const pat={"赤":[0xff,0x00,0x00,0xff],"緑":[0x00,0xcf,0x00,0xff],"青":[0x00,0x00,0x9f,0xff],
@@ -54,8 +55,6 @@ function fillDa0(data, width=16, height=16){
 	}}
 }
 //
-function bindTx(cx,tx){cx.bindTexture(TXT2D,tx);}
-function seleTx(cx,unif,unit=0){cx.activeTexture(TXT00+unit);cx.uniform1i(unif, unit)}
 function setfTx(cx,mode){
 	cx.texParameteri(TXT2D,MINFT,mode);cx.texParameteri(TXT2D,MAGFT,mode);}
 function setrTx(cx,mode){

@@ -1,4 +1,4 @@
-<h1>Texture/verbose</h1>
+<h1>Texture from dataUrl</h1>
 <hr/><canvas id="CNVS" width="256" height="256"></canvas>
 <img id="SRCI" width="256" height="256"></img>
 <textarea id="AINP" cols="40" rows="5"></textarea><hr/>
@@ -14,7 +14,7 @@ var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
-ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+ALOG.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
@@ -28,20 +28,16 @@ AINP.value="data:image/png;base64,"
 +"nHnMoVql2hXcv0RVWjnYHexIHx9ZLRyYHB2sAAAAAElFTkSuQmCC";
 cx0.useProgram(pg0);
 var tx0=cx0.createTexture();
-cx0.activeTexture(TXT00+0);	cx0.bindTexture(TXT2D, tx0);
+cx0.activeTexture(TXT00+0);cx0.bindTexture(TXT2D, tx0);
+cx0.uniform1i(pg0tex0, 0);
 function draw(){
-	cx0.uniform1i(pg0tex0, 0);
-	cx0.drawArrays(0,0,1);
-};
-function setTx(){
 	cx0.activeTexture(TXT00+0);{
 		cx0.texImage2D(TXT2D,0,FLUMI,FLUMI,TYPUB,SRCI);
 		cx0.generateMipmap(TXT2D);
 	}
-	draw();
-};	SRCI.addEventListener("load", setTx);
+	cx0.drawArrays(0,0,1);
+};	SRCI.addEventListener("load", draw);
 function update(){
 	SRCI.src=AINP.value;
-};	SRCI.addEventListener("click",update);
-update();
+};	SRCI.addEventListener("click",update);	update();
 </script>
