@@ -1,25 +1,25 @@
 <h1>Framebuffer/txtImage2D</h1>
 <canvas id="CNVS" width="256" height="256"></canvas><hr/>
-pg0:<input id="SLD0" type="range"></br>
-pg1:<input id="SLD1" type="range"></br>
+pg0:<input id="SLD0" type="range" min="0" max="6.28" step="0.02"></br>
+pg1:<input id="SLD1" type="range" min="0" max="6.28" step="0.02"></br>
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
-const FRAME=0x8d40,RENDE=0x8d41,COLOR=0x8ce0,DEPTH=0x8d00,STENC=0x8d20;
-const TXT2D=0x0de1,TXT00=0x84c0,TDIC0=0x8515;
-const ATYPE=0x8cd0,ANAME=0x8cd1,ATLVL=0x8cd2,ATFAC=0x8cd3;
-const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
-const fsrc0=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
-const vsrc1=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
-const fsrc1=`precision mediump float;uniform sampler2D tx0;
-void main(){gl_FragColor=texture2D(tx0,gl_PointCoord);}`;
 var cx0=CNVS.getContext("webgl");
+const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
+const fsrc0=`void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=vec4(1);}`;
 var pg0=getPg(cx0, vsrc0, fsrc0);AREA.value =chkPg(cx0, pg0);
 var pg0p=cx0.getAttribLocation(pg0, "p");
+const vsrc1=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
+const fsrc1=`precision mediump float;uniform sampler2D tx0;
+void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=texture2D(tx0,gl_PointCoord);}`;
 var pg1=getPg(cx0, vsrc1, fsrc1);AREA.value+=chkPg(cx0, pg1);
 var pg1p=cx0.getAttribLocation(pg1, "p");
 var pg1tx0=cx0.getUniformLocation(pg1, "tx0");
 //
+const FRAME=0x8d40,RENDE=0x8d41,COLOR=0x8ce0,DEPTH=0x8d00,STENC=0x8d20;
+const TXT2D=0x0de1,TXT00=0x84c0,TDIC0=0x8515;
+const ATYPE=0x8cd0,ANAME=0x8cd1,ATLVL=0x8cd2,ATFAC=0x8cd3;
 var da0=new Uint8Array(256*256*4);
 var tx0=cx0.createTexture();
 cx0.activeTexture(TXT00+0);cx0.bindTexture(TXT2D, tx0);
@@ -28,35 +28,26 @@ var fb0=cx0.createFramebuffer();
 cx0.bindFramebuffer(FRAME,fb0);
 cx0.framebufferTexture2D(FRAME,COLOR, TXT2D,tx0,0);AREA.value+=chkFb(cx0, fb0);
 //
-function draw0(x,y){
-	cx0.useProgram(pg0);
-	cx0.vertexAttrib4f(pg0p, x,y, 0,1);
-	cx0.drawArrays(0, 0,1);
-}
-function draw1(x,y, unit){
-	cx0.useProgram(pg1);
-	cx0.vertexAttrib4f(pg1p, x,y, 0,1);
-	cx0.uniform1i(pg1tx0, unit);
-	cx0.drawArrays(0, 0,1);
-}
 function draw(){
+	var t0=SLD0.valueAsNumber;
+	var t1=SLD1.valueAsNumber;
 	cx0.bindFramebuffer(FRAME,fb0);{
-		var t=SLD0.value/100,c=Math.cos(t*6),s=Math.sin(t*6);
-		cx0.clearColor(0.8,0.8,0,1);	cx0.clear(0x4000);
-		draw0(x=c/2, y=s/2);
+		cx0.useProgram(pg0);
+		cx0.vertexAttrib4fv(pg0p, [Math.cos(t0)/2, Math.sin(t0)/2, 0,1]);
+		cx0.clearColor(0.2,0.4,0,1);	cx0.clear(0x4000);
+		cx0.drawArrays(0, 0,1);
 	}
-	cx0.activeTexture(TXT00+0);{
-		cx0.generateMipmap(TXT2D);
-	}
+	cx0.activeTexture(TXT00+0);	cx0.generateMipmap(TXT2D);
 	cx0.bindFramebuffer(FRAME,null);{
-		var t=SLD1.value/100,c=Math.cos(t*6),s=Math.sin(t*6);
+		cx0.useProgram(pg1);
+		cx0.uniform1i(pg1tx0, 0);
+		cx0.vertexAttrib4fv(pg1p, [Math.cos(t1)/2, Math.sin(t1)/2, 0,1]);
 		cx0.clearColor(0.0,0.3,0,1);	cx0.clear(0x4000);
-		draw1(x=c/2, y=s/2, unit=0);
+		cx0.drawArrays(0, 0,1);
 	}
-}
+};	draw();
 SLD0.addEventListener("input", draw);
 SLD1.addEventListener("input", draw);
-draw();
 //
 function getPg(cx, vsrc, fsrc){
 	const SHADV=0x8b31, SHADF=0x8b30;
