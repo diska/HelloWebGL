@@ -1,0 +1,40 @@
+<h1>mousemove/getParameter</h1>
+<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+color clear value:<input id="COLO" width="80"><br/>
+<textarea id="AREA" cols="60" rows="18"></textarea>
+<style>textarea{background-color: bisque;}</style>
+<script>
+var cx0=CNVS.getContext("webgl");
+const VENDO=cx0.VENDOR;							// ==0x1f00==7936
+const RENDR=cx0.RENDERER;						// ==0x1f01==7937
+const VERSI=cx0.VERSION;						// ==0x1f02==7938
+const VPORT=cx0.VIEWPORT;						// ==0x0ba2==2978
+const SCTST=cx0.SCISSOR_TEST;					// ==0x0c11==3089
+const SCBOX=cx0.SCISSOR_BOX;					// ==0x0c10==3088
+const SHPSR=cx0.ALIASED_POINT_SIZE_RANGE;		// ==0x846d==33901
+const SHLWR=cx0.ALIASED_LINE_WIDTH_RANGE;		// ==0x846e==33902
+const SHLWV=cx0.LINE_WIDTH;						// ==0x0b21==2849
+const CCVAL=cx0.COLOR_CLEAR_VALUE;				// ==0x0c22==3106
+AREA.value="";
+AREA.value+=`vendor      :${cx0.getParameter(VENDO)}\n`;
+AREA.value+=`renderer    :${cx0.getParameter(RENDR)}\n`;
+AREA.value+=`version     :${cx0.getParameter(VERSI)}\n`;
+AREA.value+="\n"
+AREA.value+=`viewport    :(${cx0.getParameter(VPORT)})\n`;
+AREA.value+=`scissor test:${cx0.getParameter(SCTST)}\n`;
+AREA.value+="\n"
+AREA.value+=`pointSize   :(${cx0.getParameter(SHPSR)})\n`;
+AREA.value+=`lineWidth   :(${cx0.getParameter(SHLWR)})\n`;
+AREA.value+="\n"
+AREA.value+=`color clear value:(${cx0.getParameter(CCVAL)})\n`;
+function draw(ev){
+	var rect=CNVS.getBoundingClientRect();
+	var x=parseInt(ev.clientX-rect.left), y=parseInt(ev.clientY-rect.top);
+	var r=x/256, g=y/256, b=1;
+	cx0.clearColor(r,g,b,alpha=1);
+	var ccval=cx0.getParameter(CCVAL);
+	COLO.value=`(${ccval[0].toFixed(2)},${ccval[1].toFixed(2)},${ccval[2].toFixed(2)},${ccval[3].toFixed(2)})`;
+	cx0.clear(0x4000);
+};	CNVS.addEventListener("mousemove", draw);
+CNVS.dispatchEvent(new MouseEvent("mousemove"));
+</script>
