@@ -21,9 +21,9 @@ function draw(event){
 function updateMotion(ev){
 	// https://w3c.github.io/deviceorientation/spec-source-orientation.html
 	// よくわかってないのでcolorへのマッピングが妥当かの判断は保留。
-	SLDR.value=ev.accelerationIncludingGravity.x;
-	SLDG.value=ev.accelerationIncludingGravity.y;
-	SLDB.value=ev.accelerationIncludingGravity.z;
+	SLDR.value=ev.accelerationIncludingGravity.x*10;
+	SLDG.value=ev.accelerationIncludingGravity.y*10;
+	SLDB.value=ev.accelerationIncludingGravity.z*10;
 //	SLDA.value=alpha;
 	draw();
 }
