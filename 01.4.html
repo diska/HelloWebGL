@@ -11,9 +11,10 @@
 var cx=CNVS.getContext("webgl");
 var pixels=new Uint8Array(4);
 function draw(event){
-	var red=SLDR.value/360, green=SLDG.value/360, blue=SLDB.value/360, alpha=SLDA.value/100;
+	var red=parseFloat(SLDR.value)/10, green=parseFloat(SLDG.value)/10;
+	var blue=parseFloat(SLDB.value)/10, alpha=parseFloat(SLDA.value)/10;
 	cx.clearColor(red,green,blue,alpha);	cx.clear(0x4000);
-	OUT0.value=`(${red},${green},${blue},${alpha})`;
+	OUT0.value=`(${red.toFixed(2)},${green.toFixed(2)},${blue.toFixed(2)},${alpha.toFixed(2)})`;
 	cx.readPixels(0,0,1,1,cx.RGBA, cx.UNSIGNED_BYTE, pixels);
 	OUT1.value=`(${pixels[0]},${pixels[1]},${pixels[2]},${pixels[3]})`;
 }	draw();
