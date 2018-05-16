@@ -30,16 +30,14 @@ const HELLO=`
 白黒黒白黒白白白白黒白白白白黒白白白白黒白白白白黒
 `;ADAT.value=HELLO;
 var da0=new Uint8Array(256*256);
-var tx0=cx0.createTexture();cx0.activeTexture(TXT00+0);cx0.bindTexture(TXT2D,tx0);
+var tx0=cx0.createTexture();cx0.bindTexture(TXT2D,tx0);
+cx0.texParameteri(TXT2D,MAGFT,NEARE);cx0.texParameteri(TXT2D,MINFT,NEARE);
+cx0.texParameteri(TXT2D,WRAPS,CLAMP);cx0.texParameteri(TXT2D,WRAPT,CLAMP);
 cx0.useProgram(pg0);
 function draw(){
 	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
-	fillDa0(ADAT.value, sz,sz);
-	cx0.activeTexture(TXT00+0);{
-		cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);
-		cx0.generateMipmap(TXT2D);
-	}
-	cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
+	fillDa0(ADAT.value, sz,sz);	// テキストを元にUint8Arrayのデータを更新して、
+	cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);	// GPUに送る。
 	cx0.drawArrays(0, 0,1);
 };	draw();
 CNVS.addEventListener("click", draw);
