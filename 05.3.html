@@ -1,0 +1,71 @@
+<h1>Texture as data storage</h1>
+<hr/><canvas id="CNVS" width="256" height="256"></canvas>
+<textarea id="ALOG" cols="40" rows="10"></textarea>
+<style>textarea{background-color: bisque;}</style>
+<script>
+const vsrc=`
+uniform sampler2D tex0; // ■■■■■■■■■■
+attribute float idx;	// ０１２３４５６７８９
+void main(){gl_PointSize=16.;
+	gl_Position=vec4(0,0,0,1);
+	vec2 texCoord=vec2(idx*0.1, 0.5);	// 10*1画像中のピクセルの位置
+	vec2 modTexCoord=texture2D(tex0,texCoord).xy;	// の赤と青の情報を、座標データとして解釈
+	gl_Position.xy+=modTexCoord;
+}`;
+const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.b*=0.5;}`;
+var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
+const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
+var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+cx0.linkProgram(pg0);
+ALOG.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
+ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
+var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
+var pg0idx=cx0.getAttribLocation(pg0, "idx");
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+//
+const TYPUB=0x1401;
+const TXT2D=0x0de1,TXT00=0x84c0,FRGBA=0x1908,FLUMI=0x1909;
+const MAGFT=0x2800,MINFT=0x2801,NEARE=0x2600,LINEA=0x2601,NEMNE=0x2700;
+const WRAPS=0x2802,WRAPT=0x2803,REPET=0x2901,CLAMP=0x812F,REPEM=0x8370;
+// GPUリソース「unit0=texture:tx0」
+var tx0=cx0.createTexture();
+seleTx(cx0,0);bindTx(cx0,tx0);{
+	cx0.texParameteri(TXT2D,MINFT,NEARE);cx0.texParameteri(TXT2D,MAGFT,NEARE);
+	cx0.texParameteri(TXT2D,WRAPS,CLAMP);cx0.texParameteri(TXT2D,WRAPT,CLAMP);
+	cx0.texImage2D(TXT2D, 0, FRGBA, 10,1, 0,FRGBA,TYPUB, null);
+}
+// GPUリソース「buffer:bu0」
+var bu0=cx0.createBuffer();
+bindBf(cx0,bu0);{	// このバッファは
+	cx0.bufferData(cx0.ARRAY_BUFFER,40, cx0.STATIC_DRAW);	// 40バイトで
+	cx0.enableVertexAttribArray(pg0idx);	//pg0のattribute変数idxに
+	cx0.vertexAttribPointer(pg0idx,1,TYPUB,false,0,0);	// こう型変換して割り当てる
+};bindBf(cx0,null);
+// rgba*10ピクセル分の画像データを40バイトで記録。
+var da0=new Uint8Array(10*4);
+for(let i=0;i<10;i+=1){
+	var th=i/10*Math.PI/2, x=Math.cos(th), y=Math.sin(th);
+	da0[i*4+0]=x*255.99;	da0[i*4+1]=y*255.99;	da0[i*4+2]=0;	da0[i*4+3]=0xff;
+}
+var da1=new Uint8Array(10);	for(let i=0;i<10;i++){da1[i]=i;}
+//
+seleTx(cx0,0);{		fillTx(cx0, da0, 0,0,0,10,1,FRGBA,TYPUB)}
+bindBf(cx0,bu0);{	fillBf(cx0, da1,0)};bindBf(cx0,null);
+// draw
+cx0.useProgram(pg0);
+function draw(){
+	cx0.clearColor(0,0.3,0,1);cx0.clear(COLOB);
+	cx0.drawArrays(0, 0,10);
+};	draw();
+//
+function bindBf(cx,buf){cx.bindBuffer(cx.ARRAY_BUFFER,buf)}
+function fillBf(cx,data,offset=0){cx.bufferSubData(cx.ARRAY_BUFFER,offset, data)}
+function seleTx(cx,unit){cx.activeTexture(TXT00+unit)}
+function bindTx(cx,tx){cx.bindTexture(TXT2D,tx)}
+function fillTx(cx,pixels,level=0,xoffset=0,yoffset=0, width=1,height=1, format=FRGBA,type=TYPUB){
+	cx.texSubImage2D(TXT2D, 0, xoffset,yoffset, width,height, format,type,pixels);
+}
+</script>
