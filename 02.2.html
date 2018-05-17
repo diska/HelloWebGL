@@ -1,0 +1,26 @@
+<h1>colorMask</h1>
+<div><canvas id="CNVS" width="256" height="256"></canvas></div><hr/>
+<input id="SLID" type="range" max="256">
+<input id="TEXT">
+<style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
+<script>
+var cx=CNVS.getContext("webgl");
+cx.enable(cx.SCISSOR_TEST);
+function draw(){
+	var a=SLID.value;	TEXT.value="x=y="+a;
+	cx.clearColor(red=0.5, green=0.5, blue=0.5, alpha=1);
+	cx.colorMask(red=true, green=true, blue=true,alpha=true);
+	cx.scissor(64, 64, 128, 128);	cx.clear(0x4000);
+
+	cx.clearColor(red=0.2, green=0.2, blue=0.2, alpha=0.5);
+	cx.colorMask(red=false, green=true, blue=true,alpha=true);
+	cx.scissor(0, 0, a, a);	cx.clear(0x4000);
+	cx.colorMask(red=true, green=false, blue=true,alpha=true);
+	cx.scissor(a, a, 256, 256);	cx.clear(0x4000);
+	cx.colorMask(red=true, green=true, blue=false,alpha=true);
+	cx.scissor(0, a, a, 256);	cx.clear(0x4000);
+	cx.colorMask(red=true, green=true, blue=true,alpha=false);
+	cx.scissor(a, 0, 256, a);	cx.clear(0x4000);
+}
+SLID.addEventListener("input", draw);	draw();
+</script>
