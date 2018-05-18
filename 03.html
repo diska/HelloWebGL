@@ -11,13 +11,11 @@ var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
-AREA.value="";
-AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+AREA.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 //
-	cx0.useProgram(pg0);
-	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
-//	cx0.vertexAttrib4f(cx0.getAttribLocation(pg0, "p"), 0,0,0,1);	// default value
-	cx0.drawArrays(0, 0,1);
+cx0.useProgram(pg0);
+cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
+cx0.drawArrays(0, 0,1);
 </script>
