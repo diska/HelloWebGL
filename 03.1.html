@@ -26,7 +26,7 @@ function draw(){
 	var x=SLDX.value/100, y=SLDY.value/100, z=SLDZ.value/100, w=SLDW.value/100;
 	TXTX.value="x="+x, TXTY.value="y="+y, TXTZ.value="z="+z, TXTW.value="w="+w;
 	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
-	cx0.vertexAttrib4f(pg0p, x=x, y=y, z=z, w=w);	cx0.drawArrays(0, 0,1);
+	cx0.vertexAttrib4fv(pg0p, [x, y, z, w]);	cx0.drawArrays(0, 0,1);
 }	draw();
 SLDX.addEventListener("input", draw);
 SLDY.addEventListener("input", draw);

@@ -14,20 +14,21 @@ var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
 cx0.linkProgram(pg0);
-AREA.value="";
-AREA.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+AREA.value　=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 var pg0p=cx0.getAttribLocation(pg0, "p");
 //
-var dt0=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
 var bf0=cx0.createBuffer();
 bindBf(cx0, bf0);{
 	setupBf(cx0, attr=pg0p, size=2);
 	alocBf(cx0, 256, cx0.DYNAMIC_DRAW);
-	fillBf(cx0, dt0);
 };bindBf(cx0,null);
 //
+var dt0=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
+bindBf(cx0, bf0);{
+	fillBf(cx0, dt0);
+};bindBf(cx0,null);
 cx0.useProgram(pg0);
 var dt1=new Float32Array([0,1]);
 const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
