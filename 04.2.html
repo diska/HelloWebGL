@@ -1,0 +1,49 @@
+<h1>draw"Array"s/Array Buffer</h1>
+<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<textarea id="AREA" cols="80" rows="20"></textarea>
+<style>textarea{background-color: bisque;}</style>
+<script>
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=4.;gl_Position=p;}`;
+const fsrc=`void main(){gl_FragColor=vec4(1);}`;
+var cx0=CNVS.getContext("webgl");
+const SHADV=0x8b31, SHADF=0x8b30;
+var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
+var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+cx0.linkProgram(pg0);
+AREA.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
+var pg0p=cx0.getAttribLocation(pg0, "p");
+var bf0=cx0.createBuffer();
+const vertNum=256*256;
+bindBf(cx0, bf0);{
+	alocBf(cx0,vertNum*4);setupBf(cx0, attr=pg0p, size=2);
+};bindBf(cx0, null);
+//
+var dt0=new Float32Array(vertNum);
+for(i=0;i<vertNum/2; i++){
+	var t=i/(vertNum/2)*6.3;
+	dt0[i*2+0]=Math.cos(t*7);
+	dt0[i*2+1]=Math.sin(t*8);
+}
+console.log(dt0);
+bindBf(cx0, bf0);{
+	fillBf(cx0, dt0);
+};bindBf(cx0, null);
+//
+cx0.useProgram(pg0);
+function draw(){
+	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
+	cx0.drawArrays(0, 0,dt0.length/2);
+	AREA.value+=dt0.length/2;
+};	draw();
+//
+function bindBf(cx, buf){cx.bindBuffer(cx.ARRAY_BUFFER, buf);}
+function alocBf(cx, size=256, usage=cx.STATIC_DRAW){cx.bufferData(cx.ARRAY_BUFFER, size, usage);}
+function fillBf(cx, data, offset=0){cx.bufferSubData(cx.ARRAY_BUFFER, offset, data);}
+function setupBf(cx, attr, size=3, type=cx0.FLOAT, normalized=false, stride=0, offset=0){
+	cx.enableVertexAttribArray(attr);
+	cx.vertexAttribPointer(attr, size, type, normalized, stride, offset);
+}
+</script>
