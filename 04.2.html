@@ -3,7 +3,7 @@
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
-const vsrc=`attribute vec4 p;void main(){gl_PointSize=4.;gl_Position=p;}`;
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=2.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
 var cx0=CNVS.getContext("webgl");
 const SHADV=0x8b31, SHADF=0x8b30;
@@ -24,8 +24,8 @@ bindBf(cx0, bf0);{
 var dt0=new Float32Array(vertNum);
 for(i=0;i<vertNum/2; i++){
 	var t=i/(vertNum/2)*6.3;
-	dt0[i*2+0]=Math.cos(t*7);
-	dt0[i*2+1]=Math.sin(t*8);
+	dt0[i*2+0]=Math.cos(t*13);
+	dt0[i*2+1]=Math.sin(t*17);
 }
 console.log(dt0);
 bindBf(cx0, bf0);{
