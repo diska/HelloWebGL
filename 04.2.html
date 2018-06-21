@@ -1,9 +1,11 @@
 <h1>draw"Array"s/Array Buffer</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<canvas id="CNVS" width="256" height="256"></canvas><br/>
+x<input id="PRMX" type="range" value="1" min="1" max="50"><br/>
+y<input id="PRMY" type="range" value="1" min="1" max="50"><hr/>
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <style>textarea{background-color: bisque;}</style>
 <script>
-const vsrc=`attribute vec4 p;void main(){gl_PointSize=2.;gl_Position=p;}`;
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=3.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
 var cx0=CNVS.getContext("webgl");
 const SHADV=0x8b31, SHADF=0x8b30;
@@ -16,28 +18,28 @@ AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 var pg0p=cx0.getAttribLocation(pg0, "p");
 var bf0=cx0.createBuffer();
-const vertNum=256*256;
+const vertNum=256*64; // 破線に見えて速度がそこそこになりそうな数。
 bindBf(cx0, bf0);{
 	alocBf(cx0,vertNum*4);setupBf(cx0, attr=pg0p, size=2);
 };bindBf(cx0, null);
 //
 var dt0=new Float32Array(vertNum);
-for(i=0;i<vertNum/2; i++){
-	var t=i/(vertNum/2)*6.3;
-	dt0[i*2+0]=Math.cos(t*13);
-	dt0[i*2+1]=Math.sin(t*17);
-}
-console.log(dt0);
-bindBf(cx0, bf0);{
-	fillBf(cx0, dt0);
-};bindBf(cx0, null);
 //
 cx0.useProgram(pg0);
 function draw(){
+	for(i=0;i<vertNum/2; i++){
+		var th=i/(vertNum/2)*6.3;
+		dt0[i*2+0]=Math.cos(th*PRMX.value);
+		dt0[i*2+1]=Math.sin(th*PRMY.value);
+	}
+	bindBf(cx0, bf0);{
+		fillBf(cx0, dt0);
+	};bindBf(cx0, null);
 	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
 	cx0.drawArrays(0, 0,dt0.length/2);
-	AREA.value+=dt0.length/2;
 };	draw();
+PRMX.addEventListener("input", draw);
+PRMY.addEventListener("input", draw);
 //
 function bindBf(cx, buf){cx.bindBuffer(cx.ARRAY_BUFFER, buf);}
 function alocBf(cx, size=256, usage=cx.STATIC_DRAW){cx.bufferData(cx.ARRAY_BUFFER, size, usage);}
