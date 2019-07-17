@@ -1,12 +1,14 @@
+<style>textarea{background-color: bisque;}</style>
 <h1>uniform variable</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<div id="DIV"></div><hr/>
 <input id="SLDX" type="range" min="-100" max="100" value="0"><input id="TXTX"></br>
 <input id="SLDY" type="range" min="-100" max="100" value="0"><input id="TXTY"></br>
 <input id="SLDZ" type="range" min="-100" max="100" value="0"><input id="TXTZ"></br>
 <input id="SLDW" type="range" min="-100" max="100" value="100"><input id="TXTW"></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
-<style>textarea{background-color: bisque;}</style>
 <script>
+var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;uniform vec4 m;
 void main(){gl_PointSize=32.;gl_Position.xyz=p.xyz;gl_Position+=m;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;

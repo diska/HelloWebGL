@@ -1,10 +1,12 @@
+<style>textarea{background-color: bisque;}</style>
 <h1>draw"Array"s/Array Buffer</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><br/>
+<div id="DIV"></div><hr/>
 x<input id="PRMX" type="range" value="1" min="1" max="50"><br/>
 y<input id="PRMY" type="range" value="1" min="1" max="50"><hr/>
 <textarea id="AREA" cols="80" rows="20"></textarea>
-<style>textarea{background-color: bisque;}</style>
 <script>
+var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=3.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
 var cx0=CNVS.getContext("webgl");

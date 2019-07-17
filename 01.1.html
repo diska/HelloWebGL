@@ -1,6 +1,8 @@
 <h1>requestAnimationFrame</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<div id="DIV"></div><hr/>
 <script>
+var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 var cx=CNVS.getContext("webgl");
 function draw(now){
 	var theta=now/1000;
@@ -9,4 +11,3 @@ function draw(now){
 	requestAnimationFrame(draw);
 }	requestAnimationFrame(draw);
 </script>
-<a href="./input/requestAnimationFrame.html">参考</a>

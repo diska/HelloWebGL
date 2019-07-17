@@ -1,10 +1,12 @@
-<h1>texture font??</h1>
-<hr/><canvas id="CNVS" width="256" height="256"></canvas>
+<style>textarea{background-color: bisque;}</style>
+<h1>texture font??</h1><hr/>
+<span id="SPAN"></span>
 <textarea id="ADAT" cols="61" rows="14"></textarea><hr/>
 <input id="NUMB" type="range" max="9"><input id="NMTX"><br/>
 <textarea id="ALOG" cols="40" rows="10"></textarea>
-<style>textarea{background-color: bisque;}</style>
 <script>
+var CNVS=document.createElement("canvas");	SPAN.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;attribute float num;varying float vnum;
 void main(){gl_PointSize=64.;gl_Position=p;vnum=num;}`;
 const fsrc=`precision mediump float;uniform sampler2D tex0;varying float vnum;

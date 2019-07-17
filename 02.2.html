@@ -1,9 +1,11 @@
+<style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
 <h1>colorMask</h1>
-<div><canvas id="CNVS" width="256" height="256"></canvas></div><hr/>
+<div id="DIV"></div><hr/>
 <input id="SLID" type="range" max="256">
 <input id="TEXT">
-<style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
 <script>
+var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 var cx=CNVS.getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
 function draw(){

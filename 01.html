@@ -1,7 +1,9 @@
 <h1>input/addEventListener</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<div id="DIV"></div><hr/>
 red<input id="SLID" type="range"><hr/>
 <script>
+var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 var cx=CNVS.getContext("webgl");
 function draw(event){
 	var red=SLID.value/100
@@ -10,4 +12,3 @@ function draw(event){
 }
 SLID.addEventListener("input", draw);	draw();
 </script>
-<a href="./input/range.html">参考</a>

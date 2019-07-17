@@ -1,10 +1,12 @@
+<style>textarea{background-color: bisque;}</style>
 <h1>Framebuffer/txtImage2D</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<div id="DIV"></div><hr/>
 pg0:<input id="SLD0" type="range" min="0" max="6.28" step="0.02"></br>
 pg1:<input id="SLD1" type="range" min="0" max="6.28" step="0.02"></br>
 <textarea id="AREA" cols="80" rows="20"></textarea>
-<style>textarea{background-color: bisque;}</style>
 <script>
+var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 var cx0=CNVS.getContext("webgl");
 const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc0=`void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=vec4(1);}`;

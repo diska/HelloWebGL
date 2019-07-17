@@ -1,9 +1,11 @@
-<h1>Texture</h1>
-<hr/><canvas id="CNVS" width="256" height="256"></canvas><hr/>
+<style>textarea{background-color: bisque;}</style>
+<h1>Texture</h1><hr/>
+<span id="SPAN"></span>
 <input id="SLID" type="range" max="10"><input id="TEXT"><br/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
-<style>textarea{background-color: bisque;}</style>
 <script>
+var CNVS=document.createElement("canvas");	SPAN.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
 var cx0=CNVS.getContext("webgl");

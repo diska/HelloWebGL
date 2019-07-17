@@ -1,8 +1,10 @@
-<h1>Texture as data storage</h1>
-<hr/><canvas id="CNVS" width="256" height="256"></canvas>
-<textarea id="ALOG" cols="40" rows="10"></textarea>
 <style>textarea{background-color: bisque;}</style>
+<h1>Texture as data storage</h1><hr/>
+<span id="SPAN"></span>
+<textarea id="ALOG" cols="40" rows="10"></textarea>
 <script>
+var CNVS=document.createElement("canvas");	SPAN.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 const vsrc=`
 uniform sampler2D tex0; // ■■■■■■■■■■
 attribute float idx;	// ０１２３４５６７８９

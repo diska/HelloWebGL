@@ -1,8 +1,10 @@
-<h1>getParameter</h1>
-<canvas id="CNVS" width="256" height="256"></canvas><hr/>
-<textarea id="AREA" cols="60" rows="18"></textarea>
 <style>textarea{background-color: bisque;}</style>
+<h1>getParameter</h1>
+<div id="DIV"></div><hr/>
+<textarea id="AREA" cols="60" rows="18"></textarea>
 <script>
+var CNVS=document.createElement("canvas");DIV.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 var cx0=CNVS.getContext("webgl");
 const VENDO=cx0.VENDOR;							// ==0x1f00==7936
 const RENDR=cx0.RENDERER;						// ==0x1f01==7937

@@ -1,10 +1,12 @@
-<h1>Texture from dataUrl</h1>
-<hr/><canvas id="CNVS" width="256" height="256"></canvas>
+<style>textarea{background-color: bisque;}</style>
+<h1>Texture from dataUrl</h1><hr/>
+<span id="SPAN"></span>
 <img id="SRCI" width="256" height="256">
 <textarea id="AINP" cols="40" rows="5"></textarea><hr/>
 <textarea id="ALOG" cols="80" rows="25"></textarea><hr/>
-<style>textarea{background-color: bisque;}</style>
 <script>
+var CNVS=document.createElement("canvas");	SPAN.appendChild(CNVS);
+CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`precision mediump float;uniform sampler2D tex0;
 void main(){gl_FragColor=texture2D(tex0, gl_PointCoord);gl_FragColor.rg=1.-gl_FragColor.rg;}`;
