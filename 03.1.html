@@ -7,27 +7,25 @@
 <input id="SLDW" type="range" min="-100" max="100" value="100"><input id="TXTW"></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
-const vsrc=`attribute vec4 p;
-void main(){gl_PointSize=32.;gl_Position=p;}`;
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
 var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
-const SHADV=0x8b31, SHADF=0x8b30;
-var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
-var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
-var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
-cx0.linkProgram(pg0);
-AREA.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
-AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
-AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
-var pg0p=cx0.getAttribLocation(pg0, "p");
+var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+var pg=cx.createProgram();cx.attachShader(pg, vs);cx.attachShader(pg, fs);
+cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg);
+AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
+AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
+var pg0p=cx.getAttribLocation(pg, "p");
 //
-cx0.useProgram(pg0);
+cx.useProgram(pg);
 function draw(){
 	var x=SLDX.value/100, y=SLDY.value/100, z=SLDZ.value/100, w=SLDW.value/100;
 	TXTX.value="x="+x, TXTY.value="y="+y, TXTZ.value="z="+z, TXTW.value="w="+w;
-	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
-	cx0.vertexAttrib4fv(pg0p, [x, y, z, w]);	cx0.drawArrays(0, 0,1);
+	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
+	cx.vertexAttrib4fv(pg0p, [x, y, z, w]);	cx.drawArrays(0, 0,1);
 }	draw();
 SLDX.addEventListener("input", draw);
 SLDY.addEventListener("input", draw);
