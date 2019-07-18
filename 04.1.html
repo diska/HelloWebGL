@@ -9,47 +9,34 @@ mode<input id="MODE" type="range" max="6" value="4">
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
 var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
-const SHADV=0x8b31, SHADF=0x8b30;
-var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
-var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
-var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
-cx0.linkProgram(pg0);
-AREA.value　=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
-AREA.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
-AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
-var pg0p=cx0.getAttribLocation(pg0, "p");
+var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
+AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
+var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
+var pg0pBuf=cx.createBuffer();
+var data=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
+cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);
+cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
+cx.bufferData(cx.ARRAY_BUFFER, data, cx.DYNAMIC_DRAW);
+cx.bindBuffer(cx.ARRAY_BUFFER, null);
 //
-var bf0=cx0.createBuffer();
-bindBf(cx0, bf0);{
-	setupBf(cx0, attr=pg0p, size=2);
-	alocBf(cx0, 256, cx0.DYNAMIC_DRAW);
-};bindBf(cx0,null);
-//
-var dt0=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
-bindBf(cx0, bf0);{
-	fillBf(cx0, dt0);
-};bindBf(cx0,null);
-cx0.useProgram(pg0);
+cx.useProgram(pg0);
 var dt1=new Float32Array([0,1]);
 const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
 function draw(){
 	TEXT.value=mode[MODE.value];
 	var t=SLID.value/100;	dt1[0]=Math.cos(t*6.3), dt1[1]=Math.sin(t*6.3);
-	bindBf(cx0, bf0);{
-		fillBf(cx0, dt1, offset=2*Float32Array.BYTES_PER_ELEMENT);
-	};bindBf(cx0,null);
-	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
-	cx0.drawArrays(0+MODE.value, 0,dt0.length/2);
+	cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);
+	cx.bufferSubData(cx.ARRAY_BUFFER, 2*Float32Array.BYTES_PER_ELEMENT, dt1);
+	cx.bindBuffer(cx.ARRAY_BUFFER, null);
+	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
+	cx.drawArrays(0+MODE.value, 0,data.length/2);
 };	draw();
 SLID.addEventListener("input", draw);
 MODE.addEventListener("input", draw);
-//
-function bindBf(cx, buf){cx.bindBuffer(cx.ARRAY_BUFFER, buf);}
-function alocBf(cx, size=256, usage=cx.STATIC_DRAW){cx.bufferData(cx.ARRAY_BUFFER, size, usage);}
-function fillBf(cx, data, offset=0){cx.bufferSubData(cx.ARRAY_BUFFER, offset, data);}
-function setupBf(cx, attr, size=3, type=cx0.FLOAT, normalized=false, stride=0, offset=0){
-	cx.enableVertexAttribArray(attr);
-	cx.vertexAttribPointer(attr, size, type, normalized, stride, offset);
-}
 </script>

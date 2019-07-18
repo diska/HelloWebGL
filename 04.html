@@ -10,20 +10,20 @@ var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
 var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg=cx.createProgram();cx.attachShader(pg, vs);cx.attachShader(pg, fs);
-cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg);
+var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
-AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
-var pg0p=cx.getAttribLocation(pg, "p");	cx.enableVertexAttribArray(pg0p);
-var pg0pBuffer=cx.createBuffer();
+AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
+var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
+var pg0pBuf=cx.createBuffer();
 var data=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◇
-cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuffer);
+cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);
 cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
 cx.bufferData(cx.ARRAY_BUFFER, data, cx.STATIC_DRAW);
 cx.bindBuffer(cx.ARRAY_BUFFER, null);
 //
-cx.useProgram(pg);
+cx.useProgram(pg0);
 const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
 function draw(){
 	TEXT.value=mode[MODE.value];
