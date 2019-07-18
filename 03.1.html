@@ -1,16 +1,13 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>Clipping space/attribute variables/vertex attribute</h1>
 <div id="DIV"></div><hr/>
-<input id="SLDX" type="range" min="-100" max="100" value="0"><input id="TXTX"></br>
-<input id="SLDY" type="range" min="-100" max="100" value="0"><input id="TXTY"></br>
-<input id="SLDZ" type="range" min="-100" max="100" value="0"><input id="TXTZ"></br>
-<input id="SLDW" type="range" min="-100" max="100" value="100"><input id="TXTW"></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
-const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
+const vsrc=`attribute vec4 p;
+void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
 var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=CNVS.getContext("webgl",{preserveDrawingBuffer:true});	DIV.appendChild(CNVS);
 var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
 var pg=cx.createProgram();cx.attachShader(pg, vs);cx.attachShader(pg, fs);
@@ -21,16 +18,10 @@ AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
 var pg0p=cx.getAttribLocation(pg, "p");
 //
 cx.useProgram(pg);
-function draw(){
-	var x=SLDX.value/100, y=SLDY.value/100, z=SLDZ.value/100, w=SLDW.value/100;
-	TXTX.value="x="+x, TXTY.value="y="+y, TXTZ.value="z="+z, TXTW.value="w="+w;
+function draw(now){
+	var x=(now/1000)%2-1, y=Math.sin(now/1000*Math.PI), z=0, w=1;
 	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
 	cx.vertexAttrib4fv(pg0p, [x, y, z, w]);	cx.drawArrays(0, 0,1);
-}	draw();
-SLDX.addEventListener("input", draw);
-SLDY.addEventListener("input", draw);
-SLDZ.addEventListener("input", draw);
-SLDW.addEventListener("input", draw);
-CNVS.addEventListener("click", resetValues);
-function resetValues(){SLDX.value=0, SLDY.value=0, SLDZ.value=0, SLDW.value=100;draw();}
+	window.requestAnimationFrame(draw);
+}	window.requestAnimationFrame(draw);
 </script>

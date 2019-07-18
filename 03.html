@@ -3,7 +3,7 @@
 <div id="DIV"></div><hr/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
-const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
 var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
 var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
