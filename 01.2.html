@@ -8,9 +8,8 @@
 色:<input id="OUT0"><br/>
 色:<input id="OUT1">
 <script>
-var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
+var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 var pixels=new Uint8Array(4);
 function draw(event){
 	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100, alpha=SLDA.value/100;

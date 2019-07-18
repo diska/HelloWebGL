@@ -5,11 +5,10 @@ pg0:<input id="SLD0" type="range" min="0" max="6.28" step="0.02"></br>
 pg1:<input id="SLD1" type="range" min="0" max="6.28" step="0.02"></br>
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <script>
-var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl");
 const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc0=`void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=vec4(1);}`;
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
+var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 var pg0=getPg(cx0, vsrc0, fsrc0);AREA.value =chkPg(cx0, pg0);
 var pg0p=cx0.getAttribLocation(pg0, "p");
 const vsrc1=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;

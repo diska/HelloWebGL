@@ -5,12 +5,12 @@
 <textarea id="AINP" cols="40" rows="5"></textarea><hr/>
 <textarea id="ALOG" cols="80" rows="25"></textarea><hr/>
 <script>
-var CNVS=document.createElement("canvas");	SPAN.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`precision mediump float;uniform sampler2D tex0;
 void main(){gl_FragColor=texture2D(tex0, gl_PointCoord);gl_FragColor.rg=1.-gl_FragColor.rg;}`;
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
 var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
+SPAN.appendChild(CNVS);
 const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
 var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);

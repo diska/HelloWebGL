@@ -2,9 +2,8 @@
 <div id="DIV"></div><hr/>
 red<input id="SLID" type="range"><hr/>
 <script>
-var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
+var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 function draw(event){
 	var red=SLID.value/100
 	cx.clearColor(red,0,0,1);

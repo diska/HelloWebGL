@@ -1,9 +1,8 @@
 <h1>Hello/scissor</h1>
 <div id="DIV"></div><hr/>
 <script>
-var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
+var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 cx.enable(cx.SCISSOR_TEST);
 function draw(){
 	cx.clearColor(red=0, green=0, blue=0, alpha=1);

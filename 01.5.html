@@ -4,9 +4,8 @@
 color clear value:<input id="COLO" width="80"><br/>
 <textarea id="AREA" cols="60" rows="18"></textarea>
 <script>
-var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl");
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
+var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 const VENDO=cx0.VENDOR;							// ==0x1f00==7936
 const RENDR=cx0.RENDERER;						// ==0x1f01==7937
 const VERSI=cx0.VERSION;						// ==0x1f02==7938

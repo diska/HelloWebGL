@@ -7,12 +7,11 @@
 <input id="SLDW" type="range" min="-100" max="100" value="100"><input id="TXTW"></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
-var CNVS=document.createElement("canvas");	DIV.appendChild(CNVS);
-CNVS.width=256, CNVS.height=256;
 const vsrc=`attribute vec4 p;
 void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
-var cx0=CNVS.getContext("webgl");
+var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
+var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
 const SHADV=0x8b31, SHADF=0x8b30;
 var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
