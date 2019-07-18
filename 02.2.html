@@ -10,19 +10,19 @@ var cx=CNVS.getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
 function draw(){
 	var a=SLID.value;	TEXT.value="x=y="+a;
-	cx.clearColor(red=0.5, green=0.5, blue=0.5, alpha=1);
-	cx.colorMask(red=true, green=true, blue=true,alpha=true);
-	cx.scissor(64, 64, 128, 128);	cx.clear(0x4000);
+	cx.clearColor(0.5, 0.5, 0.5,  1);
+	cx.colorMask(true, true, true, true);			// 白色(灰色)
+	cx.scissor(64, 64, 128, 128);	cx.clear(0x4000);	// 中央
 
-	cx.clearColor(red=0.2, green=0.2, blue=0.2, alpha=0.5);
-	cx.colorMask(red=false, green=true, blue=true,alpha=true);
-	cx.scissor(0, 0, a, a);	cx.clear(0x4000);
-	cx.colorMask(red=true, green=false, blue=true,alpha=true);
-	cx.scissor(a, a, 256, 256);	cx.clear(0x4000);
-	cx.colorMask(red=true, green=true, blue=false,alpha=true);
-	cx.scissor(0, a, a, 256);	cx.clear(0x4000);
-	cx.colorMask(red=true, green=true, blue=true,alpha=false);
-	cx.scissor(a, 0, 256, a);	cx.clear(0x4000);
+	cx.clearColor(0.2, 0.2, 0.2,  0.5);
+	cx.colorMask(false, true, true, true);			// 水色
+	cx.scissor(0, 0, a, a);	cx.clear(0x4000);		// 左下
+	cx.colorMask(true, false, true, true);			// 紫色
+	cx.scissor(a, a, 256-a, 256-a);	cx.clear(0x4000);	// 右上
+	cx.colorMask(true, true, false, true);			// 黄色
+	cx.scissor(0, a, a, 256-a);	cx.clear(0x4000);	// 左上
+	cx.colorMask(true, true, true, false);			// 白色
+	cx.scissor(a, 0, 256-a, a);	cx.clear(0x4000);	// 右下
 }
 SLID.addEventListener("input", draw);	draw();
 </script>
