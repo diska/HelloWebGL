@@ -1,13 +1,11 @@
 <style>textarea{background-color: bisque;}</style>
-<h1>Clipping space/attribute variables/vertex attribute</h1>
-<div id="DIV"></div><hr/>
+<h1>vertexAttrib</h1>
+<canvas width="256" height="256"></canvas><hr/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
-const vsrc=`attribute vec4 p;
-void main(){gl_PointSize=32.;gl_Position=p;}`;
-const fsrc=`void main(){gl_FragColor=vec4(1);gl_FragColor.gb=gl_PointCoord;}`;
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl",{preserveDrawingBuffer:true});	DIV.appendChild(CNVS);
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=2.;gl_Position=p;}`;
+const fsrc=`void main(){gl_FragColor=vec4(1);}`;
+var cx=document.querySelector("canvas").getContext("webgl");
 var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
 var pg=cx.createProgram();cx.attachShader(pg, vs);cx.attachShader(pg, fs);
@@ -15,13 +13,11 @@ cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
-var pg0p=cx.getAttribLocation(pg, "p");
 //
 cx.useProgram(pg);
-function draw(now){
-	var x=(now/1000)%2-1, y=Math.sin(now/1000*Math.PI), z=0, w=1;
-	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
-	cx.vertexAttrib4fv(pg0p, [x, y, z, w]);	cx.drawArrays(0, 0,1);
-	window.requestAnimationFrame(draw);
-}	window.requestAnimationFrame(draw);
+cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
+for(var x=-1; x<1; x+=0.005){
+	var y=Math.sin(x*Math.PI);
+	cx.vertexAttrib2f(0, x,y);	cx.drawArrays(0, 0,1);
+}
 </script>

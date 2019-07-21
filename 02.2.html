@@ -1,11 +1,10 @@
 <style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
 <h1>colorMask</h1>
-<div id="DIV"></div><hr/>
-<input id="SLID" type="range" max="256">
+<div><canvas width="256" height="256"></canvas></div><hr/>
+<input id="SLID" oninput="draw()" type="range" max="256">
 <input id="TEXT">
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
 function draw(){
 	var a=SLID.value;	TEXT.value="x=y="+a;
@@ -22,6 +21,5 @@ function draw(){
 	cx.scissor(0, a, a, 256-a);	cx.clear(0x4000);	// 左上
 	cx.colorMask(true, true, true, false);			// 白色
 	cx.scissor(a, 0, 256-a, a);	cx.clear(0x4000);	// 右下
-}
-SLID.addEventListener("input", draw);	draw();
+};	draw();
 </script>

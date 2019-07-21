@@ -1,15 +1,14 @@
 <style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
 <h1>devicemotion (for mobile)</h1>
-<div id="DIV"></div><hr/>
-赤:<input id="SLDR" type="range"><br/>
-緑:<input id="SLDG" type="range"><br/>
-青:<input id="SLDB" type="range"><br/>
-透:<input id="SLDA" type="range"><br/>
+<canvas width="256" height="256"></canvas><hr/>
+赤:<input id="SLDR" oninput="draw()" type="range"><br/>
+緑:<input id="SLDG" oninput="draw()" type="range"><br/>
+青:<input id="SLDB" oninput="draw()" type="range"><br/>
+透:<input id="SLDA" oninput="draw()" type="range"><br/>
 色:<input id="OUT0"><br/>
 色:<input id="OUT1">
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 var pixels=new Uint8Array(4);
 function draw(event){
 	var red=parseFloat(SLDR.value)/10, green=parseFloat(SLDG.value)/10;
@@ -29,8 +28,4 @@ function updateMotion(ev){
 	draw();
 }
 window.addEventListener("devicemotion", updateMotion);
-SLDR.addEventListener("input", draw);
-SLDG.addEventListener("input", draw);
-SLDB.addEventListener("input", draw);
-SLDA.addEventListener("input", draw);
 </script>

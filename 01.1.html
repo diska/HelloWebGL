@@ -1,8 +1,7 @@
 <h1>requestAnimationFrame</h1>
-<div id="DIV"></div><hr/>
+<canvas width="256" height="256"></canvas><hr/>
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 function draw(now){
 	var theta=now/1000;
 	cx.clearColor(Math.sin(theta),0,0,1);

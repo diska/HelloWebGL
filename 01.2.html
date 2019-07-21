@@ -1,15 +1,14 @@
 <style>div{background: repeating-linear-gradient(white,grey 25%);}</style>
 <h1>Color space/readPixels</h1>
-<div id="DIV"></div><hr/>
-赤:<input id="SLDR" type="range" value="100"><br/>
-緑:<input id="SLDG" type="range" value="0"><br/>
-青:<input id="SLDB" type="range" value="0"><br/>
-透:<input id="SLDA" type="range" value="100"><br/>
+<div id="DIV"><canvas width="256" height="256"></canvas></div><hr/>
+赤:<input id="SLDR" oninput="draw()" type="range" value="100"><br/>
+緑:<input id="SLDG" oninput="draw()" type="range" value="0"><br/>
+青:<input id="SLDB" oninput="draw()" type="range" value="0"><br/>
+透:<input id="SLDA" oninput="draw()" type="range" value="100"><br/>
 色:<input id="OUT0"><br/>
 色:<input id="OUT1">
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 var pixels=new Uint8Array(4);
 function draw(event){
 	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100, alpha=SLDA.value/100;
@@ -18,8 +17,4 @@ function draw(event){
 	cx.readPixels(0,0,1,1,cx.RGBA, cx.UNSIGNED_BYTE, pixels);
 	OUT1.value=`(${pixels[0]},${pixels[1]},${pixels[2]},${pixels[3]})`;
 }	draw();
-SLDR.addEventListener("input", draw);
-SLDG.addEventListener("input", draw);
-SLDB.addEventListener("input", draw);
-SLDA.addEventListener("input", draw);
 </script>

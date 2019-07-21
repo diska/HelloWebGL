@@ -1,33 +1,27 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>getParameter</h1>
-<div id="DIV"></div><hr/>
+<canvas></canvas><hr/>
 <textarea id="AREA" cols="60" rows="18"></textarea>
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
-const VENDO=cx0.VENDOR;							// ==0x1f00==7936
-const RENDR=cx0.RENDERER;						// ==0x1f01==7937
-const VERSI=cx0.VERSION;						// ==0x1f02==7938
-const VPORT=cx0.VIEWPORT;						// ==0x0ba2==2978
-const SCTST=cx0.SCISSOR_TEST;					// ==0x0c11==3089
-const SCBOX=cx0.SCISSOR_BOX;					// ==0x0c10==3088
-const SHPSR=cx0.ALIASED_POINT_SIZE_RANGE;		// ==0x846d==33901
-const SHLWR=cx0.ALIASED_LINE_WIDTH_RANGE;		// ==0x846e==33902
-const SHLWV=cx0.LINE_WIDTH;						// ==0x0b21==2849
-const CCVAL=cx0.COLOR_CLEAR_VALUE;				// ==0x0c22==3106
-AREA.value="";
-AREA.value+=`vendor      :${cx0.getParameter(VENDO)}\n`;
-AREA.value+=`renderer    :${cx0.getParameter(RENDR)}\n`;
-AREA.value+=`version     :${cx0.getParameter(VERSI)}\n`;
-AREA.value+="\n"
-AREA.value+=`viewport    :(${cx0.getParameter(VPORT)})\n`;
-AREA.value+=`scissor test:${cx0.getParameter(SCTST)}\n`;
-AREA.value+="\n"
-AREA.value+=`pointSize   :(${cx0.getParameter(SHPSR)})\n`;
-AREA.value+=`lineWidth   :(${cx0.getParameter(SHLWR)})\n`;
-AREA.value+="\n"
-AREA.value+=`color clear value:(${cx0.getParameter(CCVAL)})\n`;
-cx0.clearColor(1,0,0, 1);
-AREA.value+=`color clear value:(${cx0.getParameter(CCVAL)})\n`;
-cx0.clear(0x4000);
+var cx0=document.querySelector("canvas").getContext("webgl");
+with(cx0){
+	canvas.width=256, canvas.height=256;
+	AREA.value="";
+	AREA.value+=`vendor      :${getParameter(VENDOR)}\n`;
+	AREA.value+=`renderer    :${getParameter(RENDERER)}\n`;
+	AREA.value+=`version     :${getParameter(VERSION)}\n`;
+	AREA.value+="\n"
+	AREA.value+=`viewport    :${getParameter(VIEWPORT)}\n`;
+	AREA.value+=`SCISSOR_TEST:${getParameter(SCISSOR_TEST)}\n`;
+	AREA.value+=`SCISSOR_BOX :${getParameter(SCISSOR_BOX)}\n`;
+	AREA.value+="\n"
+	AREA.value+=`pointSizeRange:${getParameter(ALIASED_POINT_SIZE_RANGE)}\n`;
+	AREA.value+=`lineWidthRange:${getParameter(ALIASED_LINE_WIDTH_RANGE)}\n`;
+	AREA.value+=`lineWidth     :${getParameter(LINE_WIDTH)}\n`;
+	AREA.value+="\n"
+	AREA.value+=`COLOR_CLEAR_VALUE:${getParameter(COLOR_CLEAR_VALUE)}\n`;
+	clearColor(1,0,0, 1);
+	AREA.value+=`COLOR_CLEAR_VALUE:${getParameter(COLOR_CLEAR_VALUE)}\n`;
+	clear(0x4000);
+}
 </script>

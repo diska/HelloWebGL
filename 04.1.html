@@ -1,15 +1,14 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>bufferSubData</h1>
-<div id="DIV"></div><hr/>
-<input id="SLID" type="range" value="25"></br>
-mode<input id="MODE" type="range" max="6" value="4">
+<canvas width="256" height="256"></canvas><hr/>
+角度<input id="SLID" oninput="draw()" type="range" value="25"></br>
+mode<input id="MODE" oninput="draw()" type="range" max="6" value="4">
 <input id="TEXT" ></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
 var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
@@ -20,10 +19,10 @@ AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
 var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
 var pg0pBuf=cx.createBuffer();
 var data=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
-cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);
-cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
-cx.bufferData(cx.ARRAY_BUFFER, data, cx.DYNAMIC_DRAW);
-cx.bindBuffer(cx.ARRAY_BUFFER, null);
+cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);{
+	cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
+	cx.bufferData(cx.ARRAY_BUFFER, data, cx.DYNAMIC_DRAW);
+};cx.bindBuffer(cx.ARRAY_BUFFER, null);
 //
 cx.useProgram(pg0);
 var dt1=new Float32Array([0,1]);
@@ -31,12 +30,10 @@ const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRI
 function draw(){
 	TEXT.value=mode[MODE.value];
 	var t=SLID.value/100;	dt1[0]=Math.cos(t*6.3), dt1[1]=Math.sin(t*6.3);
-	cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);
-	cx.bufferSubData(cx.ARRAY_BUFFER, 2*Float32Array.BYTES_PER_ELEMENT, dt1);
-	cx.bindBuffer(cx.ARRAY_BUFFER, null);
+	cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);{
+		cx.bufferSubData(cx.ARRAY_BUFFER, 2*Float32Array.BYTES_PER_ELEMENT, dt1);
+	};cx.bindBuffer(cx.ARRAY_BUFFER, null);
 	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
 	cx.drawArrays(0+MODE.value, 0,data.length/2);
 };	draw();
-SLID.addEventListener("input", draw);
-MODE.addEventListener("input", draw);
 </script>

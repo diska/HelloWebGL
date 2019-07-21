@@ -1,14 +1,13 @@
 <h1>deviceorientation (for mobile)</h1>
-<div id="DIV"></div><hr/>
-方位赤:<input id="SLDR" type="range"><br/>
-前転緑:<input id="SLDG" type="range"><br/>
-横転青:<input id="SLDB" type="range"><br/>
+<canvas width="256" height="256"></canvas><hr/>
+方位赤:<input id="SLDR" oninput="draw()" type="range"><br/>
+前転緑:<input id="SLDG" oninput="draw()" type="range"><br/>
+横転青:<input id="SLDB" oninput="draw()" type="range"><br/>
 元の数:<input id="OUT0"><br/>
 指定色:<input id="OUT1"><br/>
 表示色:<input id="OUT2">
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 var pixels=new Uint8Array(4);
 function draw(event){
 	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100;
@@ -26,7 +25,4 @@ function updateOrientation(ev){
 	draw();
 }
 window.addEventListener("deviceorientation", updateOrientation);
-SLDR.addEventListener("input", draw);
-SLDG.addEventListener("input", draw);
-SLDB.addEventListener("input", draw);
 </script>

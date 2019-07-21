@@ -1,14 +1,13 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>draw"Array"s/Array Buffer</h1>
-<div id="DIV"></div><hr/>
-x<input id="PRMX" type="range" value="1" min="1" max="50"><br/>
-y<input id="PRMY" type="range" value="1" min="1" max="50"><hr/>
+<canvas width="256" height="256"></canvas><hr/>
+x<input id="PRMX" oninput="draw()" type="range" value="1" min="1" max="50"><br/>
+y<input id="PRMY" oninput="draw()" type="range" value="1" min="1" max="50"><hr/>
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=3.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
 var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
@@ -38,6 +37,4 @@ function draw(){
 	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
 	cx.drawArrays(0, 0,dt0.length/2);
 };	draw();
-PRMX.addEventListener("input", draw);
-PRMY.addEventListener("input", draw);
 </script>

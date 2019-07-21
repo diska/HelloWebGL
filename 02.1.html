@@ -1,18 +1,16 @@
 <h1>scissor</h1>
-<div id="DIV"></div><hr/>
-<input id="SLID" type="range" max="256">
+<canvas width="256" height="256"></canvas><hr/>
+<input id="SLID" oninput="draw()" type="range" max="256">
 <input id="TEXT">
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
 function draw(){
 	var a=SLID.value;	TEXT.value="red=x="+a;
-	cx.clearColor(red=0.5, green=0.5, blue=0.5, alpha=1);
+	cx.clearColor(0.5, 0.5, 0.5, 1.0);
 	cx.scissor(64, 64, 128, 128);	cx.clear(0x4000);
-	cx.clearColor(red=a/100, green=0, blue=0, alpha=0.5);
+	cx.clearColor(a/256, 0.0, 0.0, 1.0);
 	cx.scissor(0, 0, a, a);	cx.clear(0x4000);
 	cx.scissor(a, a, 256-a, 256-a);	cx.clear(0x4000);
-}
-SLID.addEventListener("input", draw);	draw();
+};	draw();
 </script>

@@ -1,15 +1,13 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>Hello, Texture</h1><hr/>
-<span id="SPAN"></span>
+<canvas width="256" height="256"></canvas>
 <textarea id="ADAT" cols="52" rows="14"></textarea><hr/>
-<input id="SLID" type="range" value="5" max="8"><input id="TEXT"><br/>
+<input id="SLID" oninput="draw()" type="range" value="5" max="8"><input id="TEXT"><br/>
 <textarea id="ALOG" cols="40" rows="10"></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
-SPAN.appendChild(CNVS);
+var cx0=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
 const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
 var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
 var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
@@ -42,8 +40,7 @@ function draw(){
 	cx0.texImage2D(TXT2D, 0, FLUMI, sz, sz, 0, FLUMI, TYPUB, da0);	// GPUに送る。
 	cx0.drawArrays(0, 0,1);
 };	draw();
-CNVS.addEventListener("click", draw);
-SLID.addEventListener("input", draw);
+cx0.canvas.addEventListener("click", draw);
 //
 function fillDa0(data, width, height){
 	const pat={"黒":0x00,"白":0xff,"b":0x00,"w":0xff};

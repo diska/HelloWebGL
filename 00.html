@@ -1,7 +1,6 @@
 <h1>WebGLRenderingContext/clear</h1>
-<div id="DIV"></div><hr/>
+<canvas width="256" height="256"></canvas><hr/>
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 cx.clearColor(1,0,0, 1);	cx.clear(0x4000);
 </script>

@@ -1,32 +1,29 @@
 <h1>Hello/scissor</h1>
-<div id="DIV"></div><hr/>
+<canvas width="256" height="256"></canvas><hr/>
 <script>
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
+var cx=document.querySelector("canvas").getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
-function draw(){
-	cx.clearColor(red=0, green=0, blue=0, alpha=1);
-	cx.scissor(  0,  0,256,256);	cx.clear(0x4000);
-	cx.clearColor(red=0, green=0.5, blue=0, alpha=1);
-	cx.scissor(  0,  0, 16,256);	cx.clear(0x4000);
-	cx.scissor( 16,112, 16, 32);	cx.clear(0x4000);
-	cx.scissor( 32,  0, 16,256);	cx.clear(0x4000);
+cx.clearColor(red=0, green=0, blue=0, alpha=1);
+cx.scissor(  0,  0,256,256);	cx.clear(0x4000);
+cx.clearColor(red=0, green=0.5, blue=0, alpha=1);
+cx.scissor(  0,  0, 16,256);	cx.clear(0x4000);
+cx.scissor( 16,112, 16, 32);	cx.clear(0x4000);
+cx.scissor( 32,  0, 16,256);	cx.clear(0x4000);
 
-	cx.scissor( 64,  0, 16,256);	cx.clear(0x4000);
-	cx.scissor( 80,224, 16, 32);	cx.clear(0x4000);
-	cx.scissor( 80,112, 16, 32);	cx.clear(0x4000);
-	cx.scissor( 80,  0, 16, 32);	cx.clear(0x4000);
+cx.scissor( 64,  0, 16,256);	cx.clear(0x4000);
+cx.scissor( 80,224, 16, 32);	cx.clear(0x4000);
+cx.scissor( 80,112, 16, 32);	cx.clear(0x4000);
+cx.scissor( 80,  0, 16, 32);	cx.clear(0x4000);
 
-	cx.scissor(112,  0, 16,256);	cx.clear(0x4000);
-	cx.scissor(128,  0, 16, 32);	cx.clear(0x4000);
+cx.scissor(112,  0, 16,256);	cx.clear(0x4000);
+cx.scissor(128,  0, 16, 32);	cx.clear(0x4000);
 
-	cx.scissor(160,  0, 16,256);	cx.clear(0x4000);
-	cx.scissor(176,  0, 16, 32);	cx.clear(0x4000);
+cx.scissor(160,  0, 16,256);	cx.clear(0x4000);
+cx.scissor(176,  0, 16, 32);	cx.clear(0x4000);
 
-	cx.scissor(208,  0, 16,256);	cx.clear(0x4000);
-	cx.scissor(224,  0, 16, 32);	cx.clear(0x4000);
-	cx.scissor(224,224, 16, 32);	cx.clear(0x4000);
-	cx.scissor(240,  0, 16,256);	cx.clear(0x4000);
-}
-draw();
+cx.scissor(208,  0, 16,256);	cx.clear(0x4000);
+cx.scissor(224,  0, 16, 32);	cx.clear(0x4000);
+cx.scissor(224,224, 16, 32);	cx.clear(0x4000);
+cx.scissor(240,  0, 16,256);	cx.clear(0x4000);
+cx.disable(cx.SCISSOR_TEST);
 </script>
