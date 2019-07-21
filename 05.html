@@ -24,14 +24,11 @@ var tx0=cx.createTexture();{
 //
 var sz=256;
 var da0=new Uint8Array(sz*sz*1);
+for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
 cx.useProgram(pg0);
 function draw(){
 	sz=Math.pow(2, SLID.value);	TEXT.value=`${sz}x${sz}`;
-	fillDa0(sz,sz);
 	cx.texImage2D(cx.TEXTURE_2D, 0, cx.LUMINANCE, sz, sz, 0, cx.LUMINANCE, cx.UNSIGNED_BYTE, da0);	// GPUに送る。
 	cx.drawArrays(0, 0,1);
-	function fillDa0(width, height){
-		for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
-	}
 };	draw();
 </script>
