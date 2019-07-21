@@ -1,7 +1,8 @@
 <style>textarea{background-color: bisque;}</style>
-<h1>Texture</h1><hr/>
-<canvas width="256" height="256"></canvas><hr/>
-<input id="SLID" oninput="draw()" type="range" min="0" max="8"><input id="TEXT"><br/>
+<h1>Hello, Texture</h1><hr/>
+<canvas width="256" height="256"></canvas>
+<textarea id="ADAT" cols="52" rows="14"></textarea><hr/>
+<input id="SLID" oninput="draw()" type="range" value="5" max="8"><input id="TEXT"><br/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
@@ -20,18 +21,30 @@ var tx0=cx.createTexture();{
 	cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
 	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
 	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
+	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_WRAP_S,cx.CLAMP_TO_EDGE);
+	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_WRAP_T,cx.CLAMP_TO_EDGE);
 }
 //
-var sz=256;
-var da0=new Uint8Array(sz*sz*1);
+const pat={"黒":0x00,"白":0xff,"b":0x00,"w":0xff};
+const HELLO=`
+白黒黒白黒白白白白黒白黒黒黒黒白黒黒黒黒白白白白黒
+白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
+白白白白黒白白白黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
+白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
+白黒黒白黒白白白白黒白白白白黒白白白白黒白白白白黒
+`;ADAT.value=HELLO;
+var da0=new Uint8Array(256*256);
 cx.useProgram(pg0);
 function draw(){
-	sz=Math.pow(2, SLID.value);	TEXT.value=`${sz}x${sz}`;
-	fillDa0(sz,sz);
+	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
+	fillDa0(ADAT.value, sz,sz);	// テキストを元にUint8Arrayのデータを更新して、
 	cx.texImage2D(cx.TEXTURE_2D, 0, cx.LUMINANCE, sz, sz, 0, cx.LUMINANCE, cx.UNSIGNED_BYTE, da0);	// GPUに送る。
 	cx.drawArrays(0, 0,1);
-	function fillDa0(width, height){
-		for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
+	function fillDa0(data, width, height){
+		var str=data.split("\n");
+		for(var j=0;j<height;j++)for(var i=0;i<width;i++){
+			da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
+		}
 	}
 };	draw();
 </script>
