@@ -16,11 +16,10 @@ AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
 var pg0tex0=cx.getUniformLocation(pg0, "tex0");
 cx.pixelStorei(cx.UNPACK_ALIGNMENT, 1);
-var tx0=cx.createTexture();{
-	cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
-	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
-	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
-}
+var tx0=cx.createTexture();
+cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
+cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
+cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
 //
 var sz=256;
 var da0=new Uint8Array(sz*sz*1);

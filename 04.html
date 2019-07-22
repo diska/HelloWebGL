@@ -1,7 +1,7 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>draw"Array"s/Array Buffer</h1>
 <canvas width="256" height="256"></canvas><hr/>
-mode<input id="MODE" type="range" max="6" value="4"><input id="TEXT" ></br>
+mode<input id="MODE" oninput="draw()" type="range" max="6" value="4"><input id="TEXT" ></br>
 <textarea id="AREA" cols="80" rows="20"></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
@@ -29,5 +29,4 @@ function draw(){
 	cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
 	cx.drawArrays(cx.POINTS+MODE.value, 0,4);
 };	draw();
-MODE.addEventListener("input", draw);
 </script>
