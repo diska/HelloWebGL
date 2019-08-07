@@ -14,6 +14,7 @@ cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
+//
 var pg0tex0=cx.getUniformLocation(pg0, "tex0");
 cx.pixelStorei(cx.UNPACK_ALIGNMENT, 1);
 var tx0=cx.createTexture();
@@ -21,13 +22,12 @@ cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
 cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
 cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
 //
-var sz=256;
-var da0=new Uint8Array(sz*sz*1);
-for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
+const sz=256;
+var da0=new Uint8Array(sz*sz*1);	for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
 cx.useProgram(pg0);
 function draw(){
 	sz=Math.pow(2, SLID.value);	TEXT.value=`${sz}x${sz}`;
-	cx.texImage2D(cx.TEXTURE_2D, 0, cx.LUMINANCE, sz, sz, 0, cx.LUMINANCE, cx.UNSIGNED_BYTE, da0);	// GPUに送る。
+	cx.texImage2D(cx.TEXTURE_2D, 0, cx.LUMINANCE, sz, sz, 0, cx.LUMINANCE, cx.UNSIGNED_BYTE, da0);
 	cx.drawArrays(0, 0,1);
 };	draw();
 </script>
