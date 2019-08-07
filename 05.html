@@ -22,7 +22,7 @@ cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
 cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
 cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
 //
-const sz=256;
+var sz=256;
 var da0=new Uint8Array(sz*sz*1);	for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
 cx.useProgram(pg0);
 function draw(){
