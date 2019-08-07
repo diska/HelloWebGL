@@ -1,45 +1,57 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>Framebuffer/txtImage2D</h1>
-<div id="DIV"></div><hr/>
-pg0:<input id="SLD0" type="range" min="0" max="6.28" step="0.02"></br>
-pg1:<input id="SLD1" type="range" min="0" max="6.28" step="0.02"></br>
-<textarea id="AREA" cols="80" rows="20"></textarea>
+<canvas width="256" height="256"></canvas><hr/>
+pg0:<input id="SLD0" oninput="draw()" type="range" min="0" max="6.28" step="0.02"></br>
+pg1:<input id="SLD1" oninput="draw()" type="range" min="0" max="6.28" step="0.02"></br>
+<textarea id="AREA" cols="80" rows="20" value=""></textarea>
 <script>
+var cx0=document.querySelector("canvas").getContext("webgl");
+function getPg(pg, vsrc,fsrc){
+	var vs=cx0.createShader(cx0.VERTEX_SHADER);cx0.shaderSource(vs,vsrc);
+	var fs=cx0.createShader(cx0.FRAGMENT_SHADER);cx0.shaderSource(fs,fsrc);
+	cx0.compileShader(vs);cx0.compileShader(fs);
+	cx0.attachShader(pg,vs);cx0.attachShader(pg,fs);cx0.linkProgram(pg);
+	AREA.value+=`Compile log for VS ${vs}:\n${cx0.getShaderInfoLog(vs)}`;
+	AREA.value+=`Compile log for FS ${fs}:\n${cx0.getShaderInfoLog(fs)}`;
+	AREA.value+=`Link log for PG ${pg}:\n${cx0.getProgramInfoLog(pg)}`;
+}
 const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc0=`void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=vec4(1);}`;
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl");	DIV.appendChild(CNVS);
-var pg0=getPg(cx0, vsrc0, fsrc0);AREA.value =chkPg(cx0, pg0);
+var pg0=cx0.createProgram();	getPg(pg0, vsrc0, fsrc0);
 var pg0p=cx0.getAttribLocation(pg0, "p");
+//
 const vsrc1=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc1=`precision mediump float;uniform sampler2D tx0;
 void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=texture2D(tx0,gl_PointCoord);}`;
-var pg1=getPg(cx0, vsrc1, fsrc1);AREA.value+=chkPg(cx0, pg1);
+var pg1=cx0.createProgram();	getPg(pg1, vsrc1, fsrc1);
 var pg1p=cx0.getAttribLocation(pg1, "p");
 var pg1tx0=cx0.getUniformLocation(pg1, "tx0");
 //
-const FRAME=0x8d40,RENDE=0x8d41,COLOR=0x8ce0,DEPTH=0x8d00,STENC=0x8d20;
-const TXT2D=0x0de1,TXT00=0x84c0,TDIC0=0x8515;
-const ATYPE=0x8cd0,ANAME=0x8cd1,ATLVL=0x8cd2,ATFAC=0x8cd3;
 var da0=new Uint8Array(256*256*4);
 var tx0=cx0.createTexture();
-cx0.activeTexture(TXT00+0);cx0.bindTexture(TXT2D, tx0);
-cx0.texImage2D(TXT2D,0,cx0.RGBA, 256,256,0,cx0.RGBA,cx0.UNSIGNED_BYTE,da0);
 var fb0=cx0.createFramebuffer();
-cx0.bindFramebuffer(FRAME,fb0);
-cx0.framebufferTexture2D(FRAME,COLOR, TXT2D,tx0,0);AREA.value+=chkFb(cx0, fb0);
+cx0.activeTexture(cx0.TEXTURE0+0);cx0.bindTexture(cx0.TEXTURE_2D, tx0);
+cx0.texImage2D(cx0.TEXTURE_2D,0,cx0.RGBA, 256,256,0,cx0.RGBA,cx0.UNSIGNED_BYTE,da0);
+cx0.bindFramebuffer(cx0.FRAMEBUFFER,fb0);
+cx0.framebufferTexture2D(cx0.FRAMEBUFFER,cx0.COLOR_ATTACHMENT0,cx0.TEXTURE_2D,tx0,0);
+const stat={
+	0x8cd5:"COMPLETE",
+	0x8cd6:"INCOMPLETE_ATTACHMENT",	0x8cd7:"INCOMPLETE_MISSING_ATTACHMENT",
+	0x8cd9:"INCOMPLETE_DIMENSIONS",	0x8cdd:"UNSUPPORTED"
+};
+AREA.value+=`FramebufferStatus(fb)   =FRAMEBUFFER_${stat[cx0.checkFramebufferStatus(cx0.FRAMEBUFFER)]}\n`;
 //
 function draw(){
 	var t0=SLD0.valueAsNumber;
 	var t1=SLD1.valueAsNumber;
-	cx0.bindFramebuffer(FRAME,fb0);{
+	cx0.bindFramebuffer(cx0.FRAMEBUFFER,fb0);{
 		cx0.useProgram(pg0);
 		cx0.vertexAttrib4fv(pg0p, [Math.cos(t0)/2, Math.sin(t0)/2, 0,1]);
 		cx0.clearColor(0.2,0.4,0,1);	cx0.clear(0x4000);
 		cx0.drawArrays(0, 0,1);
 	}
-	cx0.activeTexture(TXT00+0);	cx0.generateMipmap(TXT2D);
-	cx0.bindFramebuffer(FRAME,null);{
+	cx0.activeTexture(cx0.TEXTURE0+0);	cx0.generateMipmap(cx0.TEXTURE_2D);
+	cx0.bindFramebuffer(cx0.FRAMEBUFFER,null);{
 		cx0.useProgram(pg1);
 		cx0.uniform1i(pg1tx0, 0);
 		cx0.vertexAttrib4fv(pg1p, [Math.cos(t1)/2, Math.sin(t1)/2, 0,1]);
@@ -47,33 +59,4 @@ function draw(){
 		cx0.drawArrays(0, 0,1);
 	}
 };	draw();
-SLD0.addEventListener("input", draw);
-SLD1.addEventListener("input", draw);
-//
-function getPg(cx, vsrc, fsrc){
-	const SHADV=0x8b31, SHADF=0x8b30;
-	var vs=cx.createShader(SHADV);cx.shaderSource(vs, vsrc);cx.compileShader(vs);
-	var fs=cx.createShader(SHADF);cx.shaderSource(fs, fsrc);cx.compileShader(fs);
-	var pg=cx.createProgram();cx.attachShader(pg, vs);cx.attachShader(pg, fs);
-	cx.linkProgram(pg);
-	return pg;
-}
-function chkPg(cx, pg){
-	var vs=cx.getAttachedShaders(pg)[0], fs=cx.getAttachedShaders(pg)[1];
-	var str="";
-	str+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
-	str+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
-	str+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
-	return str;
-}
-function chkFb(cx,fb){
-	const stat={};
-	const COMPL=0x8cd5,INATT=0x8cd6,INMIS=0x8cd7,INDIM=0x8cd9,UNSUP=0x8cdd;
-	stat[COMPL]="FRAMEBUFFER_COMPLETE";
-	stat[INATT]="FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
-	stat[INMIS]="FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
-	stat[INDIM]="FRAMEBUFFER_INCOMPLETE_DIMENSIONS";
-	stat[UNSUP]="FRAMEBUFFER_UNSUPPORTED";
-	return `FramebufferStatus(fb)   =${stat[cx.checkFramebufferStatus(FRAME)]}\n`;
-}
 </script>
