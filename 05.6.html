@@ -8,22 +8,21 @@
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc=`precision mediump float;uniform sampler2D tex0;uniform int num;
 void main(){
-	vec2 coord=vec2(gl_PointCoord.x,gl_PointCoord.y);
-	coord.x*=6./64.;
-	coord.x+=float(num)*(6./64.);
+	vec2 coord=gl_PointCoord;coord.x*=6./64.;coord.x+=float(num)*(6./64.);
 	gl_FragColor=texture2D(tex0,coord);
 }`;
 var cx0=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
-var vs0=cx0.createShader(cx0.VERTEX_SHADER);cx0.shaderSource(vs0, vsrc);
-var fs0=cx0.createShader(cx0.FRAGMENT_SHADER);cx0.shaderSource(fs0, fsrc);
-var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
+var vs0=cx0.createShader(cx0.VERTEX_SHADER);	cx0.shaderSource(vs0, vsrc);
+var fs0=cx0.createShader(cx0.FRAGMENT_SHADER);	cx0.shaderSource(fs0, fsrc);
+var pg0=cx0.createProgram();cx0.attachShader(pg0,vs0);cx0.attachShader(pg0,fs0);
 cx0.compileShader(vs0);cx0.compileShader(fs0);cx0.linkProgram(pg0);
 ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
 //
-cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+var pg0num=cx0.getUniformLocation(pg0, "num");
 var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 const HELLO=
 ".###....#....###...###....#...#####...#...#####..###...###..\n"+
 "#...#..##...#...#.#...#..#....#......#....#...#.#...#.#...#.\n"+
@@ -35,12 +34,11 @@ const HELLO=
 ADAT.value=HELLO;
 var da0=new Uint8Array(64*8);
 var tx0=cx0.createTexture();
-cx0.bindTexture(cx0.TEXTURE_2D, tx0);
+cx0.activeTexture(cx0.TEXTURE0);cx0.bindTexture(cx0.TEXTURE_2D, tx0);
 cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MAG_FILTER,cx0.NEAREST);
 cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MIN_FILTER,cx0.NEAREST);
 cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_WRAP_S,cx0.CLAMP_TO_EDGE);
 cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_WRAP_T,cx0.CLAMP_TO_EDGE);
-var pg0num=cx0.getUniformLocation(pg0, "num");
 //
 cx0.useProgram(pg0);
 const w=64, h=8;
