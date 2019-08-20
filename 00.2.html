@@ -1,0 +1,10 @@
+<style>textarea{background-color: bisque;}</style>
+<h1>extentions</h1>
+<canvas width="256" height="256"></canvas><hr/>
+<textarea id="LOG" cols="60" rows="30" value=""></textarea>
+<script>
+var cx=document.querySelector("canvas").getContext("webgl");
+var ext=cx.getSupportedExtensions();
+ext.forEach(function(e){LOG.value+=e+"\n";});
+cx.clearColor(1,0,0, 1);	cx.clear(0x4000);
+</script>
