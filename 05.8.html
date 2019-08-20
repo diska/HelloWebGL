@@ -1,0 +1,40 @@
+<style>textarea{background-color: bisque;}</style>
+<h1>texture coord.</h1><hr/>
+<canvas width="256" height="256"></canvas><hr/>
+<input id="SLID" oninput="draw()" type="range" min="0" max="8"><input id="TEXT"><br/>
+<textarea id="AREA" cols="40" rows="10"></textarea>
+<script>
+var cx=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
+const fsrc=`precision highp float;uniform sampler2D tex0;uniform mat2 rotZ;
+void main(){gl_FragColor=texture2D(tex0,gl_FragCoord.xy*rotZ/256.);}`;
+var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
+AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
+//
+var pg0tex0=cx.getUniformLocation(pg0, "tex0");
+cx.pixelStorei(cx.UNPACK_ALIGNMENT, 1);
+var tx0=cx.createTexture();
+cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
+cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
+cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
+var pg0rotZ=cx.getUniformLocation(pg0, "rotZ");
+//
+var sz=256;
+var da0=new Uint16Array(sz*sz*1);for(var i=0;i<sz*sz*1; i++){da0[i]=Math.random()*0xffff;da0[i]|=0x000f;};
+cx.useProgram(pg0);
+var rotZ=new Float32Array(4);
+function draw(now){
+	var theta=now/1000;
+	sz=Math.pow(2, SLID.value);	TEXT.value=`${sz}x${sz}`;
+	cx.texImage2D(cx.TEXTURE_2D, 0, cx.RGBA, sz, sz, 0, cx.RGBA, cx.UNSIGNED_SHORT_4_4_4_4, da0);
+	rotZ[0]=Math.cos(theta),rotZ[1]=-Math.sin(theta),rotZ[2]=Math.sin(theta),rotZ[3]=Math.cos(theta);
+	cx.uniformMatrix2fv(pg0rotZ, false, rotZ);
+	cx.drawArrays(0, 0,1);
+	requestAnimationFrame(draw);
+};	draw();
+</script>
