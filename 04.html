@@ -1,8 +1,8 @@
 <style>textarea{background-color: bisque;}</style>
-<h1>draw"Array"s/Array Buffer</h1>
+<h1>drawArrays/Array Buffer</h1>
 <canvas width="256" height="256"></canvas><hr/>
 mode<input id="MODE" oninput="draw()" type="range" max="6" value="4"><input id="TEXT" ></br>
-<textarea id="AREA" cols="80" rows="20"></textarea>
+<textarea id="AREA" cols="80" rows="20" value=""></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
@@ -11,7 +11,7 @@ var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
 var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
-AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
 var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
