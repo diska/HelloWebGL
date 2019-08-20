@@ -1,36 +1,29 @@
 <style>textarea{background-color: bisque;}</style>
-<h1>texture font??</h1><hr/>
-<span id="SPAN"></span>
+<h1>texture font??</h1>
+<canvas width="256" height="256"></canvas>
 <textarea id="ADAT" cols="61" rows="14"></textarea><hr/>
 <input id="NUMB" type="range" max="9"><input id="NMTX"><br/>
-<textarea id="ALOG" cols="40" rows="10"></textarea>
+<textarea id="ALOG" cols="40" rows="10" value=""></textarea>
 <script>
-const vsrc=`attribute vec4 p;attribute float num;varying float vnum;
-void main(){gl_PointSize=64.;gl_Position=p;vnum=num;}`;
-const fsrc=`precision mediump float;uniform sampler2D tex0;varying float vnum;
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
+const fsrc=`precision mediump float;uniform sampler2D tex0;uniform int num;
 void main(){
-	vec2 coord=gl_PointCoord;
+	vec2 coord=vec2(gl_PointCoord.x,gl_PointCoord.y);
 	coord.x*=6./64.;
-	coord.x+=vnum*(6./64.);
+	coord.x+=float(num)*(6./64.);
 	gl_FragColor=texture2D(tex0,coord);
 }`;
-var CNVS=document.createElement("canvas");	CNVS.width=256, CNVS.height=256;
-var cx0=CNVS.getContext("webgl",{preserveDrawingBuffer:true});
-SPAN.appendChild(CNVS);
-const SHADV=0x8b31,SHADF=0x8b30,COLOB=0x4000;
-var vs0=cx0.createShader(SHADV);cx0.shaderSource(vs0, vsrc);cx0.compileShader(vs0);
-var fs0=cx0.createShader(SHADF);cx0.shaderSource(fs0, fsrc);cx0.compileShader(fs0);
+var cx0=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
+var vs0=cx0.createShader(cx0.VERTEX_SHADER);cx0.shaderSource(vs0, vsrc);
+var fs0=cx0.createShader(cx0.FRAGMENT_SHADER);cx0.shaderSource(fs0, fsrc);
 var pg0=cx0.createProgram();cx0.attachShader(pg0, vs0);cx0.attachShader(pg0, fs0);
-cx0.linkProgram(pg0);
-ALOG.value =`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
+cx0.compileShader(vs0);cx0.compileShader(fs0);cx0.linkProgram(pg0);
+ALOG.value+=`Compile log for VS ${vs0}:\n${cx0.getShaderInfoLog(vs0)}`;
 ALOG.value+=`Compile log for FS ${fs0}:\n${cx0.getShaderInfoLog(fs0)}`;
 ALOG.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
-var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
-cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 //
-const TXT2D=0x0de1,TXT00=0x84c0,FRGBA=0x1908,FLUMI=0x1909,TYPUB=0x1401;
-const MAGFT=0x2800,MINFT=0x2801,NEARE=0x2600,LINEA=0x2601,NEMNE=0x2700;
-const WRAPS=0x2802,WRAPT=0x2803,REPET=0x2901,CLAMP=0x812F,REPEM=0x8370;
+cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
 const HELLO=
 ".###....#....###...###....#...#####...#...#####..###...###..\n"+
 "#...#..##...#...#.#...#..#....#......#....#...#.#...#.#...#.\n"+
@@ -41,28 +34,29 @@ const HELLO=
 ".###...###..#####..###.....#...###...###....#....###...###..\n\n";
 ADAT.value=HELLO;
 var da0=new Uint8Array(64*8);
-var tx0=cx0.createTexture();cx0.bindTexture(TXT2D,tx0);
-cx0.texParameteri(TXT2D,MAGFT,NEARE);cx0.texParameteri(TXT2D,MINFT,NEARE);
-cx0.texParameteri(TXT2D,WRAPS,CLAMP);cx0.texParameteri(TXT2D,WRAPT,CLAMP);
+var tx0=cx0.createTexture();
+cx0.bindTexture(cx0.TEXTURE_2D, tx0);
+cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MAG_FILTER,cx0.NEAREST);
+cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MIN_FILTER,cx0.NEAREST);
+cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_WRAP_S,cx0.CLAMP_TO_EDGE);
+cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_WRAP_T,cx0.CLAMP_TO_EDGE);
+var pg0num=cx0.getUniformLocation(pg0, "num");
+//
 cx0.useProgram(pg0);
+const w=64, h=8;
 function draw(){
-	var w=64, h=8;
-	var x=Math.random()-0.5,y=Math.random()-0.5, nu=NUMB.value;	NMTX.value=nu;
-	fillDa0(ADAT.value, w,h);	// テキストを元にUint8Arrayのデータを更新して、
-	cx0.texImage2D(TXT2D, 0, FLUMI, w, h, 0, FLUMI, TYPUB, da0);	// GPUに送る。
+	const pat={".":0x00,"#":0xff};
+	var x=Math.random()-0.5,y=Math.random()-0.5;
+	var str=ADAT.value.split("\n");
+	for(var j=0;j<h;j++){for(var i=0;i<w;i++){
+		da0[j*w+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
+	}}
+	cx0.texImage2D(cx0.TEXTURE_2D,0,cx0.LUMINANCE, w,h,0, cx0.LUMINANCE,cx0.UNSIGNED_BYTE,da0);
 	cx0.vertexAttrib4fv(0,[x,y,0,1]);
-	cx0.vertexAttrib1f(1,parseFloat(nu));
+	cx0.uniform1i(pg0num,parseInt(NMTX.value=NUMB.value));
 	cx0.clearColor(0,0.3,0,1);	cx0.clear(0x4000);
 	cx0.drawArrays(0, 0,1);
 };	draw();
-CNVS.addEventListener("click", draw);
+ADAT.addEventListener("click", draw);
 NUMB.addEventListener("input", draw);
-//
-function fillDa0(data, width, height){
-	const pat={".":0x00,"#":0xff};
-	var str=data.split("\n");
-	for(var j=0;j<height;j++){for(var i=0;i<width;i++){
-		da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
-	}}
-}
 </script>

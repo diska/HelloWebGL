@@ -2,7 +2,7 @@
 <h1>texture coord.</h1><hr/>
 <canvas width="256" height="256"></canvas><hr/>
 <input id="SLID" oninput="draw()" type="range" min="0" max="8"><input id="TEXT"><br/>
-<textarea id="AREA" cols="40" rows="10"></textarea>
+<textarea id="AREA" cols="40" rows="10" value=""></textarea>
 <script>
 var cx=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
@@ -12,7 +12,7 @@ var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
 var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
 var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
-AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
 //
@@ -36,5 +36,5 @@ function draw(now){
 	cx.uniformMatrix2fv(pg0rotZ, false, rotZ);
 	cx.drawArrays(0, 0,1);
 	requestAnimationFrame(draw);
-};	draw();
+};	requestAnimationFrame(draw);
 </script>
