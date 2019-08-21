@@ -1,0 +1,48 @@
+<style>textarea{background-color: bisque;}</style>
+<h1>stencil buffer</h1>
+<canvas width="256" height="256"></canvas>click<hr/>
+mode<input id="MODE" type="range" max="6" value="4"><input id="TEXT" ></br>
+<textarea id="AREA" cols="80" rows="20" value=""></textarea>
+<script>
+const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
+const fsrc=`void main(){gl_FragColor=vec4(1);}`;
+var cx=document.querySelector("canvas").getContext("webgl",{stencil:true,preserveDrawingBuffer:true});
+var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
+AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
+AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
+//
+var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
+const data=new Float32Array([-1,0, 0,1, 1,0, 0,-1, -.7,-.7, .7,-.7, .7,.7, -.7,.7]);	// ◇□
+var pg0pBuf=cx.createBuffer();
+cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);{
+	cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
+	cx.bufferData(cx.ARRAY_BUFFER, data, cx.STATIC_DRAW);
+};cx.bindBuffer(cx.ARRAY_BUFFER, null);
+//
+cx.useProgram(pg0);
+cx.enable(cx.STENCIL_TEST);
+cx.clearStencil(0);	cx.clear(cx.STENCIL_BUFFER_BIT);// STENCIL_BUFFER全体を0にして……
+cx.stencilFunc(cx.ALWAYS,0,~0);
+cx.colorMask(false,false,false,false);		// いまだけ、COLOR_BUFFERには何も書かないようにしておく。
+cx.stencilOp(cx.INCR,cx.INCR,cx.INCR);{
+	cx.drawArrays(cx.TRIANGLE_FAN, 4,4);	// □の中だけ、STENCILの値+1(元が0なので、今回は必ず1になる)
+};cx.stencilOp(cx.KEEP,cx.KEEP,cx.KEEP);	// 以後は、STENCIL_BUFFERをいじらない。
+cx.colorMask(true,true,true,true);			// COLOR_BUFFERに書くように戻しておく。
+//
+const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
+function draw(){
+	cx.stencilFunc(cx.EQUAL,1,~0);			// 以後のdrawArraysは、STENCILの値=1のとこだけ書く。
+	cx.clearColor(0,0.3,0,1);
+	cx.clear(cx.COLOR_BUFFER_BIT);			// STENCILの設定はclearには影響しないらしい？びっくり。
+	TEXT.value=mode[MODE.value];
+	cx.drawArrays(cx.POINTS+MODE.value, 0,4);	// ◇を白く書く。けどSTENCILの値=1じゃないとこはほっとく。
+};	draw();
+var sw=true;
+function toggle(){if(sw=!sw){cx.enable(cx.STENCIL_TEST)}else{cx.disable(cx.STENCIL_TEST)};draw()}
+cx.canvas.addEventListener("click", toggle);
+MODE.addEventListener("input", draw);
+</script>
