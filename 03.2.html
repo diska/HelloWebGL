@@ -1,17 +1,18 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>uniform</h1>
 <canvas width="256" height="256"></canvas><hr/>
-<textarea id="AREA" cols="40" rows="10"></textarea>
+<textarea id="AREA" cols="40" rows="10" value=""></textarea>
 <script>
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=2.;gl_Position=p;}`;
 const fsrc=`precision highp float;
 uniform vec4 c;void main(){gl_FragColor=c;}`;
 var cx=document.querySelector("canvas").getContext("webgl");
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg=cx.createProgram();cx.attachShader(pg, vs);cx.attachShader(pg, fs);
-cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg);
-AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
+var pg=cx.createProgram();
+var vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
+var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
+cx.shaderSource(vs, vsrc);	cx.compileShader(vs);
+cx.shaderSource(fs, fsrc);	cx.compileShader(fs);	cx.linkProgram(pg);
+AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
 pg0c=cx.getUniformLocation(pg, "c");
