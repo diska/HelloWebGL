@@ -4,7 +4,7 @@ red<input id="SLID" type="range"><hr/>
 <script>
 var cx=document.querySelector("canvas").getContext("webgl");
 function draw(event){
-	var red=SLID.value/100
+	var red=SLID.value/100;
 	cx.clearColor(red,0,0,1);
 	cx.clear(0x4000);
 }

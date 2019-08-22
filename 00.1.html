@@ -1,12 +1,11 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>getParameter</h1>
 <canvas></canvas><hr/>
-<textarea id="AREA" cols="60" rows="18"></textarea>
+<textarea id="AREA" cols="60" rows="18" value=""></textarea>
 <script>
 var cx0=document.querySelector("canvas").getContext("webgl");
 with(cx0){
 	canvas.width=256, canvas.height=256;
-	AREA.value="";
 	AREA.value+=`vendor      :${getParameter(VENDOR)}\n`;
 	AREA.value+=`renderer    :${getParameter(RENDERER)}\n`;
 	AREA.value+=`version     :${getParameter(VERSION)}\n`;
