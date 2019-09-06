@@ -7,12 +7,12 @@ var cx0=document.querySelector("canvas").getContext("webgl");
 let actualContextAttributes=cx0.getContextAttributes();
 AREA.value+=`WebGLContextAttributes  :${actualContextAttributes}\n`;
 for(p in actualContextAttributes){
-	AREA.value+=` ${p}\t=${actualContextAttributes[p]}\n`;
+	AREA.value+=` ${p}\t:${actualContextAttributes[p]}\n`;
 };AREA.value+="\n";
-AREA.value+=`WebGLRenderingContext   :${cx0}\n`;
-AREA.value+=` canvas                 :${cx0.canvas}\n`;
-AREA.value+=` drawingBufferWidth     :${cx0.drawingBufferWidth}\n`;
-AREA.value+=` drawingBufferHeight    :${cx0.drawingBufferHeight}\n\n`;
+AREA.value+=`WebGLRenderingContext    :${cx0}\n`;
+AREA.value+=` canvas                  :${cx0.canvas}\n`;
+AREA.value+=` drawingBufferWidth      :${cx0.drawingBufferWidth}\n`;
+AREA.value+=` drawingBufferHeight     :${cx0.drawingBufferHeight}\n\n`;
 AREA.value+=` VENDOR                  :${cx0.getParameter(cx0.VENDOR)}\n`;
 AREA.value+=` RENDERER                :${cx0.getParameter(cx0.RENDERER)}\n`;
 AREA.value+=` VERSION                 :${cx0.getParameter(cx0.VERSION)}\n\n`;
