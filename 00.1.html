@@ -5,13 +5,15 @@
 <script>
 var cx0=document.querySelector("canvas").getContext("webgl");
 AREA.value+=`WebGLRenderingContext   :${cx0}\n`;
-AREA.value+=` cx.canvas                 :${cx0.canvas}\n`;
-AREA.value+=` cx.drawingBufferWidth     :${cx0.drawingBufferWidth}\n`;
-AREA.value+=` cx.drawingBufferHeight    :${cx0.drawingBufferHeight}\n\n`;
+AREA.value+=` canvas                 :${cx0.canvas}\n`;
+AREA.value+=` drawingBufferWidth     :${cx0.drawingBufferWidth}\n`;
+AREA.value+=` drawingBufferHeight    :${cx0.drawingBufferHeight}\n\n`;
 let actualContextAttributes=cx0.getContextAttributes();
+AREA.value+=`WebGLContextAttributes  :${actualContextAttributes}\n`;
 for(p in actualContextAttributes){
-	AREA.value+=` cx.attr.${p}\t=${actualContextAttributes[p]}\n`;
-};AREA.value+="\n";
+	AREA.value+=` ${p}\t=${actualContextAttributes[p]}\n`;
+};
+AREA.value+="\n";
 AREA.value+=`VENDOR                  :${cx0.getParameter(cx0.VENDOR)}\n`;
 AREA.value+=`RENDERER                :${cx0.getParameter(cx0.RENDERER)}\n`;
 AREA.value+=`VERSION                 :${cx0.getParameter(cx0.VERSION)}\n\n`;
