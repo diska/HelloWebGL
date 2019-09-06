@@ -3,11 +3,12 @@
 <canvas width="256" height="256"></canvas><hr/>
 <textarea id="AREA" cols="60" rows="33" value=""></textarea>
 <script>
-var cx0=document.querySelector("canvas").getContext("webgl");
-let actualContextAttributes=cx0.getContextAttributes();
-AREA.value+=`WebGLContextAttributes  :${actualContextAttributes}\n`;
-for(p in actualContextAttributes){
-	AREA.value+=` ${p}\t:${actualContextAttributes[p]}\n`;
+let optionParameters={};
+let cx0=document.querySelector("canvas").getContext("webgl",optionParameters);
+let actualParameters=cx0.getContextAttributes();
+AREA.value+=`WebGLContextAttributes  :${actualParameters}\n`;
+for(p in actualParameters){
+	AREA.value+=` ${p}\t:${actualParameters[p]}\n`;
 };AREA.value+="\n";
 AREA.value+=`WebGLRenderingContext    :${cx0}\n`;
 AREA.value+=` canvas                  :${cx0.canvas}\n`;
