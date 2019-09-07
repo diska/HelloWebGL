@@ -4,30 +4,30 @@
 x<input id="PRMX" oninput="draw()" type="range" value="1" min="1" max="50"><br/>
 y<input id="PRMY" oninput="draw()" type="range" value="1" min="1" max="50"><hr/>
 <textarea id="AREA" cols="80" rows="20"></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=3.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
-var cx=document.querySelector("canvas").getContext("webgl");
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+let cx=document.querySelector("canvas").getContext("webgl");
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+let pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
-var pg0p=cx.getAttribLocation(pg0, "p");cx.enableVertexAttribArray(pg0p);
-var pg0pBuf=cx.createBuffer();
+let pg0p=cx.getAttribLocation(pg0, "p");cx.enableVertexAttribArray(pg0p);
+let pg0pBuf=cx.createBuffer();
 const vertNum=256*64; // 破線に見えて速度がそこそこになりそうな数。
 cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);{
 	cx.bufferData(cx.ARRAY_BUFFER, vertNum*4, cx.STREAM_DRAW);
 	cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0,0);
 };cx.bindBuffer(cx.ARRAY_BUFFER, null);
 //
-var dt0=new Float32Array(vertNum);
+let dt0=new Float32Array(vertNum);
 cx.useProgram(pg0);
 function draw(){
-	for(i=0;i<vertNum/2; i++){
-		var th=i/(vertNum/2)*6.3;
+	for(let i=0;i<vertNum/2; i++){
+		let th=i/(vertNum/2)*6.3;
 		dt0[i*2+0]=Math.cos(th*PRMX.value);
 		dt0[i*2+1]=Math.sin(th*PRMY.value);
 	}

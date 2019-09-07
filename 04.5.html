@@ -4,22 +4,22 @@
 mode<input id="MODE" type="range" max="6" value="4"><input id="TEXT"></br>
 ref<input id="REF" type="range" max="3" value="1"><input id="TREF"></br>
 <textarea id="AREA" cols="80" rows="10" value=""></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
 const opt={stencil:true,preserveDrawingBuffer:true};
-var cx=document.querySelector("canvas").getContext("webgl",opt);
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+let cx=document.querySelector("canvas").getContext("webgl",opt);
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+let pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
 //
-var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
+let pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
 const data=new Float32Array([-1,0, 0,1, 1,0, 0,-1, -.7,-.7, .7,-.7, .7,.7, -.7,.7]);	// ◇□
-var pg0pBuf=cx.createBuffer();
+let pg0pBuf=cx.createBuffer();
 cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);{
 	cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
 	cx.bufferData(cx.ARRAY_BUFFER, data, cx.STATIC_DRAW);
@@ -27,20 +27,29 @@ cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);{
 //
 cx.useProgram(pg0);
 cx.enable(cx.STENCIL_TEST);
-cx.clearStencil(0);	cx.clear(cx.STENCIL_BUFFER_BIT);// STENCIL_BUFFER全体を0にして……
-cx.stencilFunc(cx.ALWAYS,0,~0);
-cx.colorMask(false,false,false,false);		// いまだけ、COLOR_BUFFERには何も書かないようにしておく。
-cx.enable(cx.SCISSOR_TEST);{
-	cx.scissor(96,96, 64,64);
-	cx.clearStencil(1);	cx.clear(0x400);
-};cx.disable(cx.SCISSOR_TEST);
-cx.stencilOp(cx.INCR,cx.INCR,cx.INCR);{
-	cx.drawArrays(cx.TRIANGLE_FAN, 4,4);	// □の中だけ、STENCILの値+1(元が0なので、今回は必ず1になる)
-};cx.stencilOp(cx.KEEP,cx.KEEP,cx.KEEP);	// 以後は、STENCIL_BUFFERをいじらない。
-cx.colorMask(true,true,true,true);			// COLOR_BUFFERに書くように戻しておく。
+function stencil0(){
+	cx.clearStencil(0);	cx.clear(cx.STENCIL_BUFFER_BIT);// 全ピクセルのSTENCILの値=0
+}
+function stencil1(){
+	cx.stencilFunc(cx.ALWAYS,0,~0);
+	cx.enable(cx.SCISSOR_TEST);{
+		cx.scissor(96,96, 64,64);				// 中央部□内のピクセルのSTENCILの値=1
+		cx.clearStencil(1);	cx.clear(0x400);
+	};cx.disable(cx.SCISSOR_TEST);
+}
+function stencil2(){
+	cx.colorMask(false,false,false,false);{
+		cx.stencilOp(cx.INCR,cx.INCR,cx.INCR);{
+			cx.drawArrays(cx.TRIANGLE_FAN, 4,4);	// 大き目の□内ピクセルのSTENCILの値+1
+		};cx.stencilOp(cx.KEEP,cx.KEEP,cx.KEEP);	// 以後は、STENCILの値をいじらない。
+	};cx.colorMask(true,true,true,true);
+}
+stencil0();
+stencil1();
+stencil2();
 //
 const mode=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"];
-var sw=true;
+let sw=true;
 function toggle(){if(sw=!sw){cx.enable(cx.STENCIL_TEST)}else{cx.disable(cx.STENCIL_TEST)};draw()}
 function draw(){
 	TEXT.value=mode[MODE.value];

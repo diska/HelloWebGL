@@ -4,7 +4,7 @@
 roty<input id="SLID" oninput="draw()" type="range" value="0"><input id="TSLD" ></br>
 mode<input id="MODE" oninput="draw()" type="range" max="6" value="4"><input id="TMOD" ></br>
 <textarea id="AREA" cols="40" rows="10"></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;uniform float roty;
 void main(){gl_PointSize=32.;gl_Position=p;
 	gl_Position.x=cos(roty)*p.x-sin(roty)*p.z;
@@ -13,18 +13,18 @@ void main(){gl_PointSize=32.;gl_Position=p;
 //	gl_Position.xyz*=mat3(cos(roty),0,-sin(roty), 0,1,0, sin(roty),0,cos(roty));
 }`;
 const fsrc=`void main(){gl_FragColor=vec4(1);}`;
-var cx=document.querySelector("canvas").getContext("webgl");
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+let cx=document.querySelector("canvas").getContext("webgl");
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+let pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
-var pg0t=cx.getUniformLocation(pg0, "roty");
-var pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
-var pg0pBuf=cx.createBuffer();
-var data=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
+let pg0t=cx.getUniformLocation(pg0, "roty");
+let pg0p=cx.getAttribLocation(pg0, "p");	cx.enableVertexAttribArray(pg0p);
+let pg0pBuf=cx.createBuffer();
+let data=new Float32Array([-1,0, 0,1, 1,0, 0,-1]);	// ◆
 cx.bindBuffer(cx.ARRAY_BUFFER, pg0pBuf);
 cx.vertexAttribPointer(pg0p, 2, cx.FLOAT, false, 0, 0);
 cx.bufferData(cx.ARRAY_BUFFER, data, cx.DYNAMIC_DRAW);

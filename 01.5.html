@@ -2,14 +2,14 @@
 <h1>mousemove</h1>
 <canvas width="256" height="256"></canvas><hr/>
 color clear value:<input id="COLO" width="80"><br/>
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
 function draw(ev){
-	var rect=cx.canvas.getBoundingClientRect();
-	var x=parseInt(ev.clientX-rect.left), y=parseInt(ev.clientY-rect.top);
-	var r=x/256, g=y/256, b=1, a=1;
+	let rect=cx.canvas.getBoundingClientRect();
+	let x=parseInt(ev.clientX-rect.left), y=parseInt(ev.clientY-rect.top);
+	let r=x/256, g=y/256, b=1, a=1;
 	cx.clearColor(r,g,b,a);
-	var ccval=cx.getParameter(cx.COLOR_CLEAR_VALUE);
+	let ccval=cx.getParameter(cx.COLOR_CLEAR_VALUE);
 	COLO.value=`(${ccval[0].toFixed(2)},${ccval[1].toFixed(2)},${ccval[2].toFixed(2)},${ccval[3].toFixed(2)})`;
 	cx.clear(0x4000);
 };	cx.canvas.addEventListener("mousemove", draw);

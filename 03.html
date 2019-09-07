@@ -2,11 +2,11 @@
 <h1>Clip space/GLSL/WebGLProgram/WebGLShader</h1>
 <canvas width="256" height="256"></canvas><hr/>
 <textarea id="AREA" cols="40" rows="10" value=""></textarea>
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
-var pg=cx.createProgram();
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
+let pg=cx.createProgram();
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
 cx.shaderSource(vs, `attribute vec4 p;
 void main(){gl_PointSize=64.;gl_Position=p;
 }`);	cx.compileShader(vs);

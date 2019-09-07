@@ -4,32 +4,33 @@
 pg0:<input id="SLD0" oninput="draw()" type="range" min="0" max="6.28" step="0.02"></br>
 pg1:<input id="SLD1" oninput="draw()" type="range" min="0" max="6.28" step="0.02"></br>
 <textarea id="AREA" cols="80" rows="20" value=""></textarea>
-<script>
-var cx0=document.querySelector("canvas").getContext("webgl");
+<script>"use strict";
+let cx0=document.querySelector("canvas").getContext("webgl");
 function getPg(pg, vsrc,fsrc){
-	var vs=cx0.createShader(cx0.VERTEX_SHADER);cx0.shaderSource(vs,vsrc);
-	var fs=cx0.createShader(cx0.FRAGMENT_SHADER);cx0.shaderSource(fs,fsrc);
+	let vs=cx0.createShader(cx0.VERTEX_SHADER);cx0.shaderSource(vs,vsrc);
+	let fs=cx0.createShader(cx0.FRAGMENT_SHADER);cx0.shaderSource(fs,fsrc);
 	cx0.compileShader(vs);cx0.compileShader(fs);
 	cx0.attachShader(pg,vs);cx0.attachShader(pg,fs);cx0.linkProgram(pg);
 	AREA.value+=`Compile log for VS ${vs}:\n${cx0.getShaderInfoLog(vs)}`;
 	AREA.value+=`Compile log for FS ${fs}:\n${cx0.getShaderInfoLog(fs)}`;
 	AREA.value+=`Link log for PG ${pg}:\n${cx0.getProgramInfoLog(pg)}`;
 }
+//
 const vsrc0=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc0=`void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=vec4(1);}`;
-var pg0=cx0.createProgram();	getPg(pg0, vsrc0, fsrc0);
-var pg0p=cx0.getAttribLocation(pg0, "p");
+let pg0=cx0.createProgram();	getPg(pg0, vsrc0, fsrc0);
+let pg0p=cx0.getAttribLocation(pg0, "p");
 //
 const vsrc1=`attribute vec4 p;void main(){gl_PointSize=64.;gl_Position=p;}`;
 const fsrc1=`precision mediump float;uniform sampler2D tx0;
 void main(){if(length(gl_PointCoord-0.5)>0.5)discard;gl_FragColor=texture2D(tx0,gl_PointCoord);}`;
-var pg1=cx0.createProgram();	getPg(pg1, vsrc1, fsrc1);
-var pg1p=cx0.getAttribLocation(pg1, "p");
-var pg1tx0=cx0.getUniformLocation(pg1, "tx0");
+let pg1=cx0.createProgram();	getPg(pg1, vsrc1, fsrc1);
+let pg1p=cx0.getAttribLocation(pg1, "p");
+let pg1tx0=cx0.getUniformLocation(pg1, "tx0");
 //
-var da0=new Uint8Array(256*256*4);
-var tx0=cx0.createTexture();
-var fb0=cx0.createFramebuffer();
+let da0=new Uint8Array(256*256*4);
+let tx0=cx0.createTexture();
+let fb0=cx0.createFramebuffer();
 cx0.activeTexture(cx0.TEXTURE0+0);cx0.bindTexture(cx0.TEXTURE_2D, tx0);
 cx0.texImage2D(cx0.TEXTURE_2D,0,cx0.RGBA, 256,256,0,cx0.RGBA,cx0.UNSIGNED_BYTE,da0);
 cx0.bindFramebuffer(cx0.FRAMEBUFFER,fb0);
@@ -42,8 +43,8 @@ const stat={
 AREA.value+=`FramebufferStatus(fb)   =FRAMEBUFFER_${stat[cx0.checkFramebufferStatus(cx0.FRAMEBUFFER)]}\n`;
 //
 function draw(){
-	var t0=SLD0.valueAsNumber;
-	var t1=SLD1.valueAsNumber;
+	let t0=SLD0.valueAsNumber;
+	let t1=SLD1.valueAsNumber;
 	cx0.bindFramebuffer(cx0.FRAMEBUFFER,fb0);{
 		cx0.useProgram(pg0);
 		cx0.vertexAttrib4fv(pg0p, [Math.cos(t0)/2, Math.sin(t0)/2, 0,1]);

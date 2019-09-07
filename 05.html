@@ -3,27 +3,27 @@
 <canvas width="256" height="256"></canvas><hr/>
 <input id="SLID" oninput="draw()" type="range" min="0" max="8"><input id="TEXT"><br/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
-var cx=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+let cx=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+let pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
 //
-var pg0tex0=cx.getUniformLocation(pg0, "tex0");
+let pg0tex0=cx.getUniformLocation(pg0, "tex0");
 cx.pixelStorei(cx.UNPACK_ALIGNMENT, 1);
-var tx0=cx.createTexture();
+let tx0=cx.createTexture();
 cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
 cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
 cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
 //
-var sz=256;
-var da0=new Uint8Array(sz*sz*1);	for(var i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
+let sz=256;
+let da0=new Uint8Array(sz*sz*1);	for(let i=0;i<sz*sz*1; i++)da0[i]=Math.random()*256;
 cx.useProgram(pg0);
 function draw(){
 	sz=Math.pow(2, SLID.value);	TEXT.value=`${sz}x${sz}`;

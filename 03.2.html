@@ -2,25 +2,25 @@
 <h1>uniform</h1>
 <canvas width="256" height="256"></canvas><hr/>
 <textarea id="AREA" cols="40" rows="10" value=""></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=2.;gl_Position=p;}`;
 const fsrc=`precision highp float;
 uniform vec4 c;void main(){gl_FragColor=c;}`;
-var cx=document.querySelector("canvas").getContext("webgl");
-var pg=cx.createProgram();
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
+let cx=document.querySelector("canvas").getContext("webgl");
+let pg=cx.createProgram();
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
 cx.shaderSource(vs, vsrc);	cx.compileShader(vs);
 cx.shaderSource(fs, fsrc);	cx.compileShader(fs);	cx.linkProgram(pg);
 AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
-pg0c=cx.getUniformLocation(pg, "c");
+let pg0c=cx.getUniformLocation(pg, "c");
 //
 cx.useProgram(pg);
 cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
-for(var x=-1; x<1; x+=0.005){
-	var y=Math.sin(x*Math.PI);
+for(let x=-1; x<1; x+=0.005){
+	let y=Math.sin(x*Math.PI);
 	cx.vertexAttrib2f(0, x,y);
 	cx.uniform4f(pg0c, x+0.5,y+0.5,1,1);
 	cx.drawArrays(0, 0,1);

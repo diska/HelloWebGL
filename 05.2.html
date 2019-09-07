@@ -4,26 +4,27 @@
 <textarea id="ADAT" cols="52" rows="14"></textarea><hr/>
 <input id="SLID" oninput="draw()" type="range" value="0" max="8"><input id="TEXT"><br/>
 <textarea id="AREA" cols="40" rows="12"></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
-var cx0=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
-var vs=cx0.createShader(cx0.VERTEX_SHADER);	cx0.shaderSource(vs, vsrc);
-var fs=cx0.createShader(cx0.FRAGMENT_SHADER);	cx0.shaderSource(fs, fsrc);
-var pg0=cx0.createProgram();cx0.attachShader(pg0, vs);cx0.attachShader(pg0, fs);
+let cx0=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
+let vs=cx0.createShader(cx0.VERTEX_SHADER);	cx0.shaderSource(vs, vsrc);
+let fs=cx0.createShader(cx0.FRAGMENT_SHADER);	cx0.shaderSource(fs, fsrc);
+let pg0=cx0.createProgram();cx0.attachShader(pg0, vs);cx0.attachShader(pg0, fs);
 cx0.compileShader(vs);	cx0.compileShader(fs);	cx0.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx0.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx0.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
-var pg0tex0=cx0.getUniformLocation(pg0, "tex0");
+let pg0tex0=cx0.getUniformLocation(pg0, "tex0");
 cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
+let MCTIU, M_TIU;
 AREA.value+=`MAX_TEXTURE_SIZE=                ${cx0.getParameter(cx0.MAX_TEXTURE_SIZE)}\n`;
 AREA.value+=`MAX_CUBE_MAP_TEXTURE_SIZE=       ${cx0.getParameter(cx0.MAX_CUBE_MAP_TEXTURE_SIZE)}\n`;
 AREA.value+=`MAX_COMBINED_TEXTURE_IMAGE_UNITS=${MCTIU=cx0.getParameter(cx0.MAX_COMBINED_TEXTURE_IMAGE_UNITS)}\n`;
 AREA.value+=`MAX_VERTEX_TEXTURE_IMAGE_UNITS=  ${cx0.getParameter(cx0.MAX_VERTEX_TEXTURE_IMAGE_UNITS)}\n`;
 AREA.value+=`MAX_TEXTURE_IMAGE_UNITS=         ${M_TIU=cx0.getParameter(cx0.MAX_TEXTURE_IMAGE_UNITS)}\n`;
-var txs=[];
-for(unit=0;unit<MCTIU-1;unit++){
+let txs=[];
+for(let unit=0;unit<MCTIU-1;unit++){
 	txs[unit]=cx0.createTexture();
 	cx0.activeTexture(cx0.TEXTURE0+unit);cx0.bindTexture(cx0.TEXTURE_2D,txs[unit]);
 	cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MIN_FILTER,cx0.NEAREST);
@@ -32,16 +33,16 @@ for(unit=0;unit<MCTIU-1;unit++){
 //
 SLID.max=MCTIU-1;
 var AL=new Array(32);AL.fill("\n");
-AL[0]=`黒白白黒黒\n白黒黒白黒\n白白白白黒\n白黒黒白黒\n白黒黒白黒\n\n`
+AL[0]=`白黒黒白黒\n白黒黒白黒\n白白白白黒\n白黒黒白黒\n白黒黒白黒\n\n`
 AL[1]=`白白白白黒\n白黒黒黒黒\n白白白黒黒\n白黒黒黒黒\n白白白白黒\n\n`
 AL[2]=`白黒黒白黒\n白黒黒白黒\n白白白白黒\n白黒黒白黒\n白黒黒白黒\n\n`
 AL[3]=`白黒黒黒黒\n白黒黒黒黒\n白黒黒黒黒\n白黒黒黒黒\n白白白白黒\n\n`
 AL[4]=`黒白白黒黒\n白黒黒白黒\n白黒黒白黒\n白黒黒白黒\n黒白白黒黒\n\n`
 cx0.useProgram(pg0);
-var da0=new Uint8Array(8*8);
+let da0=new Uint8Array(8*8);
 //
 function draw(){
-	var unit=parseInt(SLID.value);	TEXT.value="TEXTURE"+unit;
+	let unit=parseInt(SLID.value);	TEXT.value="TEXTURE"+unit;
 	ADAT.value=AL[unit];
 	cx0.activeTexture(cx0.TEXTURE0+unit);{
 		fillTxs(AL[unit], 8,8,unit);
@@ -52,9 +53,9 @@ function draw(){
 	cx0.drawArrays(0, 0,1);
 	function fillTxs(data, width, height,unit){
 		const pat={"黒":0x00,"白":0xff,"b":0x00,"w":0xff};
-		var str=data.split("\n");
+		let str=data.split("\n");
 		console.log(str);
-		for(var j=0;j<height;j++)for(var i=0;i<width;i++){
+		for(let j=0;j<height;j++)for(let i=0;i<width;i++){
 			da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
 		}
 	}

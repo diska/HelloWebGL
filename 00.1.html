@@ -2,12 +2,12 @@
 <h1>contextAttributes/getParameter</h1>
 <canvas width="256" height="256"></canvas><hr/>
 <textarea id="AREA" cols="60" rows="33" value=""></textarea>
-<script>
-let optionParameters={};
+<script>"use strict";
+let optionParameters={alpha:false,stencil:false};
 let cx0=document.querySelector("canvas").getContext("webgl",optionParameters);
 let actualParameters=cx0.getContextAttributes();
 AREA.value+=`WebGLContextAttributes  :${actualParameters}\n`;
-for(p in actualParameters){
+for(let p in actualParameters){
 	AREA.value+=` ${p}\t:${actualParameters[p]}\n`;
 };AREA.value+="\n";
 AREA.value+=`WebGLRenderingContext    :${cx0}\n`;

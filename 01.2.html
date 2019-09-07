@@ -7,11 +7,11 @@
 透:<input id="SLDA" oninput="draw()" type="range" value="100"><br/>
 色:<input id="OUT0"><br/>
 色:<input id="OUT1">
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
-var pixels=new Uint8Array(4);
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
+let pixels=new Uint8Array(4);
 function draw(event){
-	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100, alpha=SLDA.value/100;
+	let red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100, alpha=SLDA.value/100;
 	cx.clearColor(red,green,blue,alpha);	cx.clear(0x4000);
 	OUT0.value=`(${red},${green},${blue},${alpha})`;
 	cx.readPixels(0,0,1,1,cx.RGBA, cx.UNSIGNED_BYTE, pixels);

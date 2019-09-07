@@ -4,20 +4,20 @@
 <textarea id="ADAT" cols="52" rows="14"></textarea><hr/>
 <input id="SLID" oninput="draw()" type="range" value="5" max="8"><input id="TEXT"><br/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
-var cx=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
-var pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
+let cx=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs, vsrc);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs, fsrc);
+let pg0=cx.createProgram();cx.attachShader(pg0, vs);cx.attachShader(pg0, fs);
 cx.compileShader(vs);	cx.compileShader(fs);	cx.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx.getProgramInfoLog(pg0)}`;
-var pg0tex0=cx.getUniformLocation(pg0, "tex0");
+let pg0tex0=cx.getUniformLocation(pg0, "tex0");
 cx.pixelStorei(cx.UNPACK_ALIGNMENT, 1);
-var tx0=cx.createTexture();{
+let tx0=cx.createTexture();{
 	cx.activeTexture(cx.TEXTURE0);cx.bindTexture(cx.TEXTURE_2D,tx0);
 	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MIN_FILTER,cx.NEAREST);
 	cx.texParameteri(cx.TEXTURE_2D,cx.TEXTURE_MAG_FILTER,cx.NEAREST);
@@ -33,16 +33,16 @@ const HELLO=`
 白黒黒白黒白黒黒黒黒白黒黒黒黒白黒黒黒黒白黒黒白黒
 白黒黒白黒白白白白黒白白白白黒白白白白黒白白白白黒
 `;ADAT.value=HELLO;
-var da0=new Uint8Array(256*256);
+let da0=new Uint8Array(256*256);
 cx.useProgram(pg0);
 function draw(){
-	var sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
+	let sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
 	fillDa0(ADAT.value, sz,sz);	// テキストを元にUint8Arrayのデータを更新して、
 	cx.texImage2D(cx.TEXTURE_2D, 0, cx.LUMINANCE, sz, sz, 0, cx.LUMINANCE, cx.UNSIGNED_BYTE, da0);	// GPUに送る。
 	cx.drawArrays(0, 0,1);
 	function fillDa0(data, width, height){
-		var str=data.split("\n");
-		for(var j=0;j<height;j++)for(var i=0;i<width;i++){
+		let str=data.split("\n");
+		for(let j=0;j<height;j++)for(let i=0;i<width;i++){
 			da0[j*width+i]=(str[j]&&str[j][i])?pat[str[j][i]]:0x00;
 		}
 	}

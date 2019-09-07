@@ -2,14 +2,14 @@
 <h1>stencil</h1>
 <canvas width="256" height="256"></canvas><hr/>
 <textarea id="AREA" cols="40" rows="10" value=""></textarea>
-<script>
+<script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=32.;gl_Position=p;}`;
 const fsrc=`void main(){gl_FragColor=vec4(gl_PointCoord.xy,1,1);}`;
 const opt={stencil:true};
-var cx=document.querySelector("canvas").getContext("webgl",opt);
-var pg=cx.createProgram();
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
+let cx=document.querySelector("canvas").getContext("webgl",opt);
+let pg=cx.createProgram();
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.attachShader(pg, vs);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.attachShader(pg, fs);
 cx.shaderSource(vs, vsrc);	cx.compileShader(vs);
 cx.shaderSource(fs, fsrc);	cx.compileShader(fs);	cx.linkProgram(pg);
 AREA.value+=`Compile log for VS ${vs}:\n${cx.getShaderInfoLog(vs)}`;
@@ -17,14 +17,14 @@ AREA.value+=`Compile log for FS ${fs}:\n${cx.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg}:\n${cx.getProgramInfoLog(pg)}`;
 //
 cx.enable(cx.SCISSOR_TEST);{
-	for(var x=0; x<256; x+=8){
+	for(let x=0; x<256; x+=8){
 		cx.scissor(x,0, 3,256);	cx.clearStencil(1);	cx.clear(0x400);
 	}
 };cx.disable(cx.SCISSOR_TEST);
 cx.enable(cx.STENCIL_TEST);		cx.stencilFunc(cx.EQUAL,1,~0);
 cx.useProgram(pg);
 cx.clearColor(0,0.3,0,1);	cx.clear(0x4000);
-for(var x=-1; x<1; x+=0.005){
+for(let x=-1; x<1; x+=0.005){
 	cx.vertexAttrib2f(0, x, Math.sin(x*Math.PI));
 	cx.drawArrays(0, 0,1);
 }

@@ -1,9 +1,9 @@
 <h1>requestAnimationFrame</h1>
 <canvas width="256" height="256"></canvas><hr/>
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
 function draw(now){
-	var theta=now/1000;
+	let theta=now/1000;
 	cx.clearColor(Math.sin(theta),0,0,1);
 	cx.clear(0x4000);
 	requestAnimationFrame(draw);

@@ -5,7 +5,7 @@
 <input id="MODE" type="range" value="0" max="6"><input id="DMODE"><br/>
 <input id="SIZE" type="range" value="8" max="50"><input id="PSIZE"><br/>
 <input id="ROTY" type="range" min="-1.6" max="1.6" step="0.1"><input id="ROTYA"><br/>
-<script>
+<script>"use strict";
 AREA.value=`v 0 1 0\nv 1 0 0\nv -1 0 0`;
 const vs0src=`attribute vec4 p;uniform float f, s, r;
 void main(){gl_PointSize=s;
@@ -14,24 +14,24 @@ void main(){gl_PointSize=s;
 	gl_Position.xyz*=f/100.;
 }`;
 const fs0src=`void main(){gl_FragColor=vec4(1);gl_FragColor.rb*=0.5;}`;
-var cx=document.querySelector("canvas").getContext("webgl");
-var vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs,vs0src);
-var fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs,fs0src);
-var pg=cx.createProgram();cx.attachShader(pg, vs);	cx.attachShader(pg, fs);
+let cx=document.querySelector("canvas").getContext("webgl");
+let vs=cx.createShader(cx.VERTEX_SHADER);	cx.shaderSource(vs,vs0src);
+let fs=cx.createShader(cx.FRAGMENT_SHADER);	cx.shaderSource(fs,fs0src);
+let pg=cx.createProgram();cx.attachShader(pg, vs);	cx.attachShader(pg, fs);
 cx.compileShader(vs);cx.compileShader(fs);cx.linkProgram(pg);
 console.log(`VERTEX_SHADER:${cx.getShaderInfoLog(vs)}`);
 console.log(`FRAGMENT_SHADER:${cx.getShaderInfoLog(fs)}`);
 console.log(`LINK:${cx.getProgramInfoLog(pg)}`);
 //
-var data=[];
+let data=[];
 function setBuf(){
 	data=[];
-	var s1=AREA.value.match(new RegExp(/v .* .* .*/g));
-	for(i=0; i<s1.length; i++){
-		var s2=s1[i].split(" ");
+	let s1=AREA.value.match(new RegExp(/v .* .* .*/g));
+	for(let i=0; i<s1.length; i++){
+		let s2=s1[i].split(" ");
 		data.push(s2[1],s2[2],s2[3]);
 	}
-	var buf=cx.createBuffer();
+	let buf=cx.createBuffer();
 	cx.bindBuffer(cx.ARRAY_BUFFER, buf);
 	cx.enableVertexAttribArray(0);
 	cx.vertexAttribPointer(0, 3, cx.FLOAT, false, 0,0);

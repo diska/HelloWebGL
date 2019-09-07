@@ -1,10 +1,10 @@
 <style>canvas{background-color: black;}</style>
 <h1>scissor</h1>
 <canvas width="256" height="256"></canvas><hr/>
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
-for(var i=0; i<128; i++)for(var j=0; j<128; j++){
+for(let i=0; i<128; i++)for(let j=0; j<128; j++){
 	cx.scissor(i*4,j*4, 3,3);
 	cx.clearColor(r(),r(),r(),1);cx.clear(0x4000);
 }

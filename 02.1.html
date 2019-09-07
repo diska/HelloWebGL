@@ -2,11 +2,11 @@
 <canvas width="256" height="256"></canvas><hr/>
 <input id="SLID" oninput="draw()" type="range" max="256">
 <input id="TEXT">
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
 cx.enable(cx.SCISSOR_TEST);
 function draw(){
-	var a=SLID.value;	TEXT.value="red=x="+a;
+	let a=SLID.value;	TEXT.value="red=x="+a;
 	cx.clearColor(0.5, 0.5, 0.5, 1.0);
 	cx.scissor(64, 64, 128, 128);	cx.clear(0x4000);
 	cx.clearColor(a/256, 0.0, 0.0, 1.0);

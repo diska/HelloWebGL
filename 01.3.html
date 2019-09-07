@@ -6,11 +6,11 @@
 元の数:<input id="OUT0"><br/>
 指定色:<input id="OUT1"><br/>
 表示色:<input id="OUT2">
-<script>
-var cx=document.querySelector("canvas").getContext("webgl");
-var pixels=new Uint8Array(4);
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
+let pixels=new Uint8Array(4);
 function draw(event){
-	var red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100;
+	let red=SLDR.value/100, green=SLDG.value/100, blue=SLDB.value/100;
 	cx.clearColor(red,green,blue,1);	cx.clear(0x4000);
 	OUT0.value=`(${SLDR.value},${SLDG.value},${SLDB.value},${1})`;
 	OUT1.value=`(${red},${green},${blue},${1})`;
