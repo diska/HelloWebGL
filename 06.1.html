@@ -1,0 +1,31 @@
+<style>canvas{background-color: black;}</style>
+<h1>scissor+texture+framebuffer</h1>
+<canvas width="256" height="256"></canvas><hr/>
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
+let IMG=document.createElement("img");
+IMG.addEventListener("load",load);IMG.src="input/img.png";
+cx.enable(cx.SCISSOR_TEST);
+let tx0=cx.createTexture();cx.activeTexture(cx.TEXTURE0+0);cx.bindTexture(cx.TEXTURE_2D,tx0);
+let fb=cx.createFramebuffer();
+//
+let buf=new Uint8Array(256*256*4);
+let c=0;
+function draw(){
+	cx.bindFramebuffer(cx.FRAMEBUFFER, fb);{
+		cx.readPixels(0,0, 256,256, cx.RGBA,cx.UNSIGNED_BYTE,buf);
+	}cx.bindFramebuffer(cx.FRAMEBUFFER, null);
+	for(let i=0; i<256; i++)for(let j=0; j<256; j++){
+		cx.scissor(i,j, 1,1);
+		c=(j*256+i)*4;
+		cx.clearColor(buf[c+0]/255,buf[c+1]/255,buf[c+2]/255,1);cx.clear(0x4000);
+	}
+}
+function load(){
+	cx.bindFramebuffer(cx.FRAMEBUFFER, fb);{
+		cx.framebufferTexture2D(cx.FRAMEBUFFER,cx.COLOR_ATTACHMENT0,cx.TEXTURE_2D,tx0,0);
+		cx.texImage2D(cx.TEXTURE_2D,0,cx.RGBA,cx.RGBA,cx.UNSIGNED_BYTE,IMG);
+	}cx.bindFramebuffer(cx.FRAMEBUFFER, null);
+	draw();
+}
+</script>
