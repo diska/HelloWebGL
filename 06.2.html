@@ -1,0 +1,40 @@
+<style>canvas{background-color: black;}</style>
+<h1>texture+framebuffer+readPixels+scissor</h1>
+<canvas width="256" height="256"></canvas><hr/>
+X<input id="X" type="range" value="0" max="240" step="1"><input id="XL"><br/>
+Y<input id="Y" type="range" value="0" max="240" step="1"><input id="YL">
+<script>"use strict";
+let cx=document.querySelector("canvas").getContext("webgl");
+let IMG0=document.createElement("img");IMG0.addEventListener("load",fillBuf);
+//
+let loadedImages=0, c=0;
+let buf=new Uint8Array(256*256*4);
+IMG0.src="input/img.png";
+function draw(){
+	XL.value=X.value;	YL.value=Y.value;
+	if(loadedImages<1){requestAnimationFrame(draw);return;}
+	cx.enable(cx.SCISSOR_TEST);
+	for(let i=0; i<16; i++)for(let j=0; j<16; j++){
+		c=(parseInt(Y.value)+j)*256+(parseInt(X.value)+i)*1;
+		let r=buf[c*4+0]/255, g=buf[c*4+1]/255, b=buf[c*4+2]/255;
+		cx.scissor(i*16,j*16, 16,16);
+		cx.clearColor(r,g,b,1);cx.clear(0x4000);
+	}
+	cx.disable(cx.SCISSOR_TEST);
+};	requestAnimationFrame(draw);
+function fillBuf(ev){
+	let fb=cx.createFramebuffer();
+	let tx0=cx.createTexture();
+	cx.activeTexture(cx.TEXTURE0+0);cx.bindTexture(cx.TEXTURE_2D,tx0);
+	cx.bindFramebuffer(cx.FRAMEBUFFER, fb);
+	cx.framebufferTexture2D(cx.FRAMEBUFFER,cx.COLOR_ATTACHMENT0,cx.TEXTURE_2D,tx0,0);
+	cx.texImage2D(cx.TEXTURE_2D,0,cx.RGBA,cx.RGBA,cx.UNSIGNED_BYTE,ev.target);
+	cx.readPixels(0,0, 256,256, cx.RGBA,cx.UNSIGNED_BYTE,buf);
+	cx.bindFramebuffer(cx.FRAMEBUFFER, null);
+	cx.deleteTexture(tx0);
+	cx.deleteFramebuffer(fb);
+	loadedImages+=1;
+}
+X.addEventListener("input", draw);
+Y.addEventListener("input", draw);
+</script>
