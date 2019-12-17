@@ -2,50 +2,52 @@
 <h1>Texture</h1><hr/>
 <canvas width="256" height="256"></canvas>
 <textarea id="ADAT" cols="35" rows="18"></textarea><hr/>
-<input id="SLID" oninput="draw()" type="range" value="4" max="4"><input id="TEXT"><br/>
+<input id="SLID" type="range" value="4" max="4"><input id="TEXT"><br/>
 <textarea id="AREA" cols="40" rows="10"></textarea>
 <script>"use strict";
 const vsrc=`attribute vec4 p;void main(){gl_PointSize=256.;gl_Position=p;}`;
 const fsrc=`uniform sampler2D tex0;void main(){gl_FragColor=texture2D(tex0,gl_PointCoord);}`;
 let cx0=document.querySelector("canvas").getContext("webgl",{preserveDrawingBuffer:true});
-let vs=cx0.createShader(cx0.VERTEX_SHADER);	cx0.shaderSource(vs, vsrc);
-let fs=cx0.createShader(cx0.FRAGMENT_SHADER);	cx0.shaderSource(fs, fsrc);
-let pg0=cx0.createProgram();cx0.attachShader(pg0, vs);cx0.attachShader(pg0, fs);
-cx0.compileShader(vs);	cx0.compileShader(fs);	cx0.linkProgram(pg0);
+let pg0=cx0.createProgram();
+let vs=cx0.createShader(cx0.VERTEX_SHADER);		cx0.attachShader(pg0, vs);
+let fs=cx0.createShader(cx0.FRAGMENT_SHADER);	cx0.attachShader(pg0, fs);
+cx0.shaderSource(vs, vsrc);	cx0.compileShader(vs);
+cx0.shaderSource(fs, fsrc);	cx0.compileShader(fs);	cx0.linkProgram(pg0);
 AREA.value =`Compile log for VS ${vs}:\n${cx0.getShaderInfoLog(vs)}`;
 AREA.value+=`Compile log for FS ${fs}:\n${cx0.getShaderInfoLog(fs)}`;
 AREA.value+=`Link log for PG ${pg0}:\n${cx0.getProgramInfoLog(pg0)}`;
-let pg0tex0=cx0.getUniformLocation(pg0, "tex0");
-cx0.pixelStorei(cx0.UNPACK_ALIGNMENT, 1);
 let tx0=cx0.createTexture();
 cx0.activeTexture(cx0.TEXTURE0+0);cx0.bindTexture(cx0.TEXTURE_2D,tx0);
 //
+const pat={
+	"赤":[0xff,0x00,0x00,0xff],"緑":[0x00,0xcf,0x00,0xff],"青":[0x00,0x00,0x9f,0xff],
+	"黒":[0x00,0x00,0x00,0xff],"白":[0xff,0xff,0xff,0xff],"透":[0x00,0x00,0x00,0x00],
+	"R":[0xff,0x00,0x00,0xff],"G":[0x00,0xcf,0x00,0xff],"B":[0x00,0x00,0x9f,0xff],
+	"b":[0x00,0x00,0x00,0xff],"w":[0xff,0xff,0xff,0xff],"a":[0x00,0x00,0x00,0x00],
+};
 const l="赤緑青白赤緑青黒黒青緑赤白青緑赤\n";
 ADAT.value=l+l+l+l+l+l+l+l+l+l+l+l+l+l+l+l;
 let da0=new Uint8Array(256*4);
-let txMode=true;
+let txMode=true, sz=16;
 cx0.useProgram(pg0);
-cx0.uniform1i(pg0tex0, 0)
 function draw(){
-	let sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
-	fillDa0(ADAT.value, sz,sz);
 	if(txMode){setFilter(cx0.NEAREST)}else{setFilter(cx0.LINEAR)};
-	cx0.texImage2D(cx0.TEXTURE_2D, 0, cx0.RGBA, sz, sz, 0, cx0.RGBA, cx0.UNSIGNED_BYTE, da0);
-	cx0.clearColor(0,0.3,0,1);cx0.clear(0x4000);
-	cx0.drawArrays(0, 0,1);
 	function setFilter(mode){
 		cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MIN_FILTER,mode);
 		cx0.texParameteri(cx0.TEXTURE_2D,cx0.TEXTURE_MAG_FILTER,mode);
 	}
-};	draw();
-cx0.canvas.addEventListener("click", function(){txMode=!txMode;draw()});
+	cx0.clearColor(0,0.3,0,1);cx0.clear(0x4000);
+	cx0.drawArrays(0, 0,1);
+	requestAnimationFrame(draw);
+};	requestAnimationFrame(draw);
+cx0.canvas.addEventListener("click", function(){txMode=!txMode;});
+function updateParams(){
+	sz=Math.pow(2, SLID.value);	TEXT.value=sz+"x"+sz;	// 1,2,4,8,16...
+	fillDa0(ADAT.value, sz,sz);
+	cx0.texImage2D(cx0.TEXTURE_2D, 0, cx0.RGBA, sz, sz, 0, cx0.RGBA, cx0.UNSIGNED_BYTE, da0);
+};	SLID.addEventListener("input", updateParams);	updateParams();
 //
-function fillDa0(data, width=16, height=16){
-	const pat={
-		"赤":[0xff,0x00,0x00,0xff],"緑":[0x00,0xcf,0x00,0xff],"青":[0x00,0x00,0x9f,0xff],
-		"黒":[0x00,0x00,0x00,0xff],"白":[0xff,0xff,0xff,0xff],"透":[0x00,0x00,0x00,0x00],
-		"R":[0xff,0x00,0x00,0xff],"G":[0x00,0xcf,0x00,0xff],"B":[0x00,0x00,0x9f,0xff],
-		"b":[0x00,0x00,0x00,0xff],"w":[0xff,0xff,0xff,0xff],"a":[0x00,0x00,0x00,0x00],};
+function fillDa0(data, width, height){
 	let str=data.split("\n");
 	for(var j=0;j<height;j++)for(var i=0;i<width;i++){
 		da0.set((str[j]&&str[j][i])?pat[str[j][i]]:[0x00,0x00,0x00,0x00], (j*width+i)*4);
