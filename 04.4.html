@@ -1,17 +1,13 @@
 <style>textarea{background-color:bisque}</style>
 <canvas width="300" height="300"></canvas>
 <textarea id="AREA" rows="16" cols="40"></textarea><hr/>
-<input id="SLID" type="range" value="90" max="100"><input id="SCALE"><br/>
 <input id="MODE" type="range" value="0" max="6"><input id="DMODE"><br/>
-<input id="SIZE" type="range" value="8" max="50"><input id="PSIZE"><br/>
 <input id="ROTY" type="range" min="-1.6" max="1.6" step="0.1"><input id="ROTYA"><br/>
 <script>"use strict";
 AREA.value=`v 0 1 0\nv 1 0 0\nv -1 0 0`;
-const vs0src=`attribute vec4 p;uniform float f, s, r;
-void main(){gl_PointSize=s;
-	gl_Position=p;
-	gl_Position.xz*=mat2(cos(r),-sin(r), sin(r),cos(r));
-	gl_Position.xyz*=f/100.;
+const vs0src=`attribute vec4 p;uniform float r;
+void main(){gl_PointSize=16.;
+	gl_Position=p;	gl_Position.xz*=mat2(cos(r),-sin(r), sin(r),cos(r));
 }`;
 const fs0src=`void main(){gl_FragColor=vec4(1);gl_FragColor.rb*=0.5;}`;
 let cx=document.querySelector("canvas").getContext("webgl");
@@ -43,8 +39,6 @@ cx.useProgram(pg);
 function draw(now){
 	cx.clearColor(0,0,0,1);	cx.clear(cx.COLOR_BUFFER_BIT);
 	DMODE.value=["POINTS","LINES","LINE_LOOP","LINE_STRIP","TRIANGLES","TRIANGLE_STRIP","TRIANGLE_FAN"][MODE.value]
-	SCALE.value="Scale ="+SLID.value;	cx.uniform1f(cx.getUniformLocation(pg, "f"), SLID.value);
-	PSIZE.value="PtSize="+SIZE.value;	cx.uniform1f(cx.getUniformLocation(pg, "s"), SIZE.value);
 	ROTYA.value="RotYax="+ROTY.value;	cx.uniform1f(cx.getUniformLocation(pg, "r"), ROTY.value);
 	cx.drawArrays(MODE.value, 0, data.length/3);
 	requestAnimationFrame(draw);
