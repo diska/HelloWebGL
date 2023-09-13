@@ -1,12 +1,12 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>extensions</h1>
 <canvas width="256" height="256"></canvas><hr/>
-<textarea id="LOG" cols="60" rows="30" value=""></textarea><hr/>
+<textarea id="LG" cols="60" rows="30" value=""></textarea><hr/>
 <a href="https://www.khronos.org/registry/webgl/extensions/">KHRONOS group: WebGL Extension Registry</a>
 <script>"use strict";
 let cx=document.querySelector("canvas").getContext("webgl");
 let ext=cx.getSupportedExtensions();
-//ext.forEach(function(e){LOG.value+=e+"\n";});
-for(let i=0;i<ext.length; i++)LOG.value+=`${ext[i]}\n`;
+//ext.forEach(function(e){LG.value+=e+"\n";});
+for(let i=0;i<ext.length; i++)LG.value+=`${ext[i]}\n`;
 cx.clearColor(1,0,0, 1);	cx.clear(0x4000);
 </script>

@@ -1,30 +1,30 @@
 <style>textarea{background-color: bisque;}</style>
 <h1>contextAttributes/getParameter</h1>
 <canvas width="256" height="256"></canvas><hr/>
-<textarea id="AREA" cols="60" rows="33" value=""></textarea>
+<textarea id="LG" cols="60" rows="33" value=""></textarea>
 <script>"use strict";
 let optionParameters={alpha:false,stencil:false};
 let cx0=document.querySelector("canvas").getContext("webgl",optionParameters);
 let actualParameters=cx0.getContextAttributes();
-AREA.value+=`WebGLContextAttributes  :${actualParameters}\n`;
+LG.value+=`WebGLContextAttributes  :${actualParameters}\n`;
 for(let p in actualParameters){
-	AREA.value+=` ${p}\t:${actualParameters[p]}\n`;
-};AREA.value+="\n";
-AREA.value+=`WebGLRenderingContext    :${cx0}\n`;
-AREA.value+=` canvas                  :${cx0.canvas}\n`;
-AREA.value+=` drawingBufferWidth      :${cx0.drawingBufferWidth}\n`;
-AREA.value+=` drawingBufferHeight     :${cx0.drawingBufferHeight}\n\n`;
-AREA.value+=` VENDOR                  :${cx0.getParameter(cx0.VENDOR)}\n`;
-AREA.value+=` RENDERER                :${cx0.getParameter(cx0.RENDERER)}\n`;
-AREA.value+=` VERSION                 :${cx0.getParameter(cx0.VERSION)}\n\n`;
-AREA.value+=` VIEWPORT                :${cx0.getParameter(cx0.VIEWPORT)}\n`;
-AREA.value+=` SCISSOR_TEST            :${cx0.getParameter(cx0.SCISSOR_TEST)}\n`;
-AREA.value+=` SCISSOR_BOX             :${cx0.getParameter(cx0.SCISSOR_BOX)}\n\n`;
-AREA.value+=` ALIASED_POINT_SIZE_RANGE:${cx0.getParameter(cx0.ALIASED_POINT_SIZE_RANGE)}\n`;
-AREA.value+=` ALIASED_LINE_WIDTH_RANGE:${cx0.getParameter(cx0.ALIASED_LINE_WIDTH_RANGE)}\n`;
-AREA.value+=` LINE_WIDTH              :${cx0.getParameter(cx0.LINE_WIDTH)}\n\n`;
-AREA.value+=` COLOR_CLEAR_VALUE       :${cx0.getParameter(cx0.COLOR_CLEAR_VALUE)}\n`;
+	LG.value+=` ${p}\t:${actualParameters[p]}\n`;
+};LG.value+="\n";
+LG.value+=`WebGLRenderingContext    :${cx0}\n`;
+LG.value+=` canvas                  :${cx0.canvas}\n`;
+LG.value+=` drawingBufferWidth      :${cx0.drawingBufferWidth}\n`;
+LG.value+=` drawingBufferHeight     :${cx0.drawingBufferHeight}\n\n`;
+LG.value+=` VENDOR                  :${cx0.getParameter(cx0.VENDOR)}\n`;
+LG.value+=` RENDERER                :${cx0.getParameter(cx0.RENDERER)}\n`;
+LG.value+=` VERSION                 :${cx0.getParameter(cx0.VERSION)}\n\n`;
+LG.value+=` VIEWPORT                :${cx0.getParameter(cx0.VIEWPORT)}\n`;
+LG.value+=` SCISSOR_TEST            :${cx0.getParameter(cx0.SCISSOR_TEST)}\n`;
+LG.value+=` SCISSOR_BOX             :${cx0.getParameter(cx0.SCISSOR_BOX)}\n\n`;
+LG.value+=` ALIASED_POINT_SIZE_RANGE:${cx0.getParameter(cx0.ALIASED_POINT_SIZE_RANGE)}\n`;
+LG.value+=` ALIASED_LINE_WIDTH_RANGE:${cx0.getParameter(cx0.ALIASED_LINE_WIDTH_RANGE)}\n`;
+LG.value+=` LINE_WIDTH              :${cx0.getParameter(cx0.LINE_WIDTH)}\n\n`;
+LG.value+=` COLOR_CLEAR_VALUE       :${cx0.getParameter(cx0.COLOR_CLEAR_VALUE)}\n`;
 cx0.clearColor(1,0,0, 1);
-AREA.value+=` COLOR_CLEAR_VALUE       :${cx0.getParameter(cx0.COLOR_CLEAR_VALUE)}\n`;
+LG.value+=` COLOR_CLEAR_VALUE       :${cx0.getParameter(cx0.COLOR_CLEAR_VALUE)}\n`;
 cx0.clear(0x4000);
 </script>
