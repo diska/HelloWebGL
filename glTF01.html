@@ -1,0 +1,10 @@
+<style>canvas,textarea{background-color: khaki;}</style>
+<canvas width="256" height="256"></canvas><hr>
+<textarea id="LG" cols="30" rows="10"></textarea>
+<script>"use strict";
+let run=(r)=>{
+	LG.value+=`${r.asset.generator}\n`;
+	LG.value+=`${r.asset.version}\n`;
+}
+fetch("files/cube.gltf").then(r=>r.json()).then(run);
+</script>

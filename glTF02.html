@@ -1,0 +1,22 @@
+<style>canvas,textarea{background-color: khaki;}</style>
+<textarea id="LG" cols="32" rows="30"></textarea>
+<script>"use strict";
+let draw=(mesh)=>{
+	LG.value+=`POSITION		\n${mesh.attr.POSITION}\n`;
+	LG.value+=`NORMAL		\n${mesh.attr.NORMAL}\n`;
+	LG.value+=`TEXCOORD_0	\n${mesh.attr.TEXCOORD_0}\n`;
+	LG.value+=`indices		\n${mesh.indices}\n`;
+}
+/**@param{ArrayBuffer}r*/
+let stAB=(r)=>{
+	let POSITION=	new Float32Array(r,	0,		24*3);
+	let NORMAL=		new Float32Array(r,	288,	24*3);
+	let TEXCOORD_0=	new Float32Array(r,	576,	24*2);
+	let indices=	new Uint16Array(r,	768,	36*1);
+	let mesh={attr:{POSITION,NORMAL,TEXCOORD_0}, indices};
+	return mesh;
+}
+let ftAB=(r)=>fetch(r.buffers[0].uri).then(r=>r.arrayBuffer()).then(stAB);
+let ftJN=(uri)=>fetch(uri).then(r=>r.json()).then(ftAB);
+ftJN("files/cube.gltf").then(draw);
+</script>

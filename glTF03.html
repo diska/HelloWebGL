@@ -1,0 +1,49 @@
+<style>canvas,textarea{background-color: khaki;}</style>
+<canvas width="256" height="256"></canvas><hr>
+<textarea id="LG" cols="32" rows="12"></textarea>
+<script>"use strict";
+let vsrc=`attribute vec4 p,n,t;uniform mat4 m,j;varying vec4,vp,vn,vt;
+void main(){gl_PointSize=32.;gl_Position=p*m*j;vp=p*m*j,vn=n*m*j,vt=t;}`;
+let fsrc=`precision highp float;varying vec4,vp,vn,vt;
+void main(){gl_FragColor=vec4(vt.rgb,1);}`;
+let m, j, mesh;
+let cx=document.querySelector("canvas").getContext("webgl");{
+	let pg=cx.createProgram();
+	let vs=cx.createShader(cx.VERTEX_SHADER);cx.attachShader(pg,vs);
+	let fs=cx.createShader(cx.FRAGMENT_SHADER);cx.attachShader(pg,fs);
+	cx.shaderSource(vs,vsrc);cx.compileShader(vs);
+	cx.shaderSource(fs,fsrc);cx.compileShader(fs);	cx.linkProgram(pg);
+	cx.useProgram(pg);
+	m=cx.getUniformLocation(pg,"m");j=cx.getUniformLocation(pg,"j");
+};
+let draw=(now)=>{
+	let th=now/1000,c=Math.cos(th),s=Math.sin(th);
+	cx.uniformMatrix4fv(m,false,[c,0,s,0,0,1,0,0,-s,0,c,0,0,0,0,1]);
+	cx.uniformMatrix4fv(j,false,[1,0,0,0,0,1,0,0,0,0,1,0,0,0,.3,2]);
+	cx.clearColor(0,0,1,1);cx.clear(0x4000);	cx.enable(cx.DEPTH_TEST);
+	cx.drawElements(4,36,cx.UNSIGNED_SHORT,0);//cx.drawArrays(0,0,24);
+	requestAnimationFrame(draw);
+}
+let stAB=(r)=>{
+	let POSITION=	new Float32Array(r,	0,		24*3);
+	let NORMAL=		new Float32Array(r,	288,	24*3);
+	let TEXCOORD_0=	new Float32Array(r,	576,	24*2);
+	let indices=	new Uint16Array(r,	768,	36*1);
+	let AB=cx.ARRAY_BUFFER,EB=cx.ELEMENT_ARRAY_BUFFER;
+	let ab=cx.createBuffer(),eb=cx.createBuffer();
+	cx.bindBuffer(AB,ab);cx.bindBuffer(EB,eb);{
+		cx.bufferData(AB,768,cx.STATIC_DRAW);
+		cx.bufferData(EB,indices,cx.STATIC_DRAW);
+		cx.enableVertexAttribArray(0);cx.bufferSubData(AB,0,POSITION);
+		cx.enableVertexAttribArray(1);cx.bufferSubData(AB,288,NORMAL);
+		cx.enableVertexAttribArray(2);cx.bufferSubData(AB,576,TEXCOORD_0);
+		cx.vertexAttribPointer(0,3,cx.FLOAT,false,0,0);
+		cx.vertexAttribPointer(1,3,cx.FLOAT,false,0,288);
+		cx.vertexAttribPointer(2,2,cx.FLOAT,false,0,576);
+	};cx.bindBuffer(AB,ab);
+	mesh={attr:{POSITION,NORMAL,TEXCOORD_0}, indices};
+}
+let ftAB=(r)=>fetch(r.buffers[0].uri).then(r=>r.arrayBuffer()).then(stAB);
+let ftJN=(uri)=>fetch(uri).then(r=>r.json()).then(ftAB);
+ftJN("files/cube.gltf").then(draw);
+</script>
