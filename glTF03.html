@@ -3,9 +3,9 @@
 <textarea id="LG" cols="32" rows="12"></textarea>
 <script>"use strict";
 let vsrc=`attribute vec4 p,n,t;uniform mat4 m,j;varying vec4,vp,vn,vt;
-void main(){gl_PointSize=32.;gl_Position=p*m*j;vp=p*m*j,vn=n*m*j,vt=t;}`;
+void main(){gl_PointSize=32.;gl_Position=p*m*j;vp=p*m*j,vn=n,vt=t;}`;
 let fsrc=`precision highp float;varying vec4,vp,vn,vt;
-void main(){gl_FragColor=vec4(vt.rgb,1);}`;
+void main(){gl_FragColor=vec4(vn.rgb/2.,1);}`;
 let m, j, mesh;
 let cx=document.querySelector("canvas").getContext("webgl");{
 	let pg=cx.createProgram();
